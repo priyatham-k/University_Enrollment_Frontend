@@ -21,7 +21,7 @@ function Login() {
       });
       if (response.data.message === "Login successful") {
         // Redirect to Dashboard upon successful login
-        navigate("/Dashboard");
+        navigate("/StudentApplication");
       } else {
         setError(response.data.message);
       }
