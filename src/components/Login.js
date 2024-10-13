@@ -3,25 +3,38 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { Link } from "react-router-dom";
+
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  // New function to handle login for different roles
+  const handleLogin = async (role) => {
     setError(null); // Reset error state
 
     try {
       // API call using Axios
-      const response = await axios.post("http://localhost:3001/api/user/login", {
-        username,
-        password,
-      });
-      if (response.data.message === "Login successful") {
-        // Redirect to Dashboard upon successful login
-        navigate("/StudentApplication");
+      const response = await axios.post(
+        "http://localhost:3001/api/user/login",
+        {
+          username,
+          password,
+          role, // Send the role with the login request
+        }
+      );
+        console.log(response)
+      if (response.data.message === "Login successful.") {
+        // Navigate based on the role
+        sessionStorage.setItem("user", JSON.stringify(response.data.user));
+        if (response.data.user.role === "student") {
+          navigate("/StudentDashboard");
+        } else if (response.data.user.role === "instructor") {
+          navigate("/InstructorDashboard");
+        } else if (response.data.user.role === "admin") {
+          navigate("/AdminDashboard");
+        }
       } else {
         setError(response.data.message);
       }
@@ -29,57 +42,77 @@ function Login() {
       setError("Failed to login. Please check your credentials.");
     }
   };
+
   return (
     <div>
-      <div class="bg-gradient-primary appStyle">
-        <div class="container p-1">
-          <div class="row justify-content-center">
-            <div class="col-xl-10 col-lg-12 col-md-9">
-              <div class="card o-hidden border-0 shadow-lg my-5">
-                <div class="card-body p-0">
-                  <div class="row">
-                    <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                    <div class="col-lg-6">
-                      <div class="p-5">
-                        <div class="text-center">
-                          <h1 class="h4 text-gray-900 mb-4">Welcome!</h1>
+      <div className="bg-gradient-primary appStyle">
+        <div className="container p-1">
+          <div className="row justify-content-center">
+            <div className="col-xl-10 col-lg-12 col-md-9">
+              <div className="card o-hidden border-0 shadow-lg my-5">
+                <div className="card-body p-0">
+                  <div className="row">
+                    <div className="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                    <div className="col-lg-6">
+                      <div className="p-5">
+                        <div className="text-center">
+                          <h1 className="h4 text-gray-900 mb-4">Welcome!</h1>
                         </div>
-                        
-                        <form class="user" onSubmit={handleLogin}>
-                          <div class="form-group">
+
+                        <form
+                          className="user"
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleLogin("student"); // Default role is student for form submission
+                          }}
+                        >
+                          <div className="form-group">
                             <input
                               type="text"
-                              class="form-control form-control-user"
+                              className="form-control form-control-user"
                               id="exampleInputEmail"
                               aria-describedby="emailHelp"
                               placeholder="Enter Email Address..."
                               onChange={(e) => setUsername(e.target.value)}
                             ></input>
                           </div>
-                          <div class="form-group">
+                          <div className="form-group">
                             <input
                               type="password"
-                              class="form-control form-control-user"
+                              className="form-control form-control-user"
                               id="exampleInputPassword"
                               placeholder="Password"
                               onChange={(e) => setPassword(e.target.value)}
                             ></input>
                           </div>
-                          {error && <p style={{ color: 'red' }}>{error}</p>}
-                          <button class="btn btn-primary btn-user btn-block">Student Login</button>
+                          {error && <p style={{ color: "red" }}>{error}</p>}
+                          <button
+                            type="submit"
+                            className="btn btn-primary btn-user btn-block"
+                          >
+                            Student Login
+                          </button>
                           <hr></hr>
-                          <a class="btn btn-google btn-user btn-block">
-                            <i class="fab fa-google fa-fw"></i> Instructor Login
-                          </a>
-                          <a class="btn btn-facebook btn-user btn-block">
-                            <i class="fab fa-facebook-f fa-fw"></i> Admin Login
-                          </a>
+                          <button
+                            type="button"
+                            className="btn btn-google btn-user btn-block"
+                            onClick={() => handleLogin("instructor")}
+                          >
+                            Instructor Login
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-facebook btn-user btn-block"
+                            onClick={() => handleLogin("admin")}
+                          >
+                            Admin Login
+                          </button>
                         </form>
                         <hr></hr>
-                        <div class="text-center">
-                          <a class="small">
-                            <Link to="/Register">Create an Account!</Link>
-                          </a>
+                        <div className="text-center">
+                          <Link className="small" to="/Register">
+                            Create an Account!
+                          </Link>
                         </div>
                       </div>
                     </div>

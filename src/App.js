@@ -6,9 +6,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 // Lazy load components
 const Login = lazy(() => import("./components/Login"));
 const Register = lazy(() => import("./components/Register"));
-const StudentApplication = lazy(() => import("./components/StudentApplication"));
+const StudentDashboard = lazy(() => import("./components/StudentDashboard"));
 const InstructorDashBoard = lazy(() => import("./components/InstructorDashBoard"));
 const AdminDashBoard = lazy(() => import("./components/AdminDashBoard"));
+const StudentEnrolledClasses = lazy(() => import("./components/StudentEnrolledClasses"));
 function App() {
   return (
     <div className="appStyle">
@@ -18,9 +19,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/Register" element={<Register />} />
-            <Route path="/StudentApplication" element={<StudentApplication />} />
+            <Route path="/StudentDashboard" element={<StudentDashboard />} />
             <Route path="/InstructorDashBoard" element={<InstructorDashBoard />} />
             <Route path="/AdminDashBoard" element={<AdminDashBoard />} />
+            <Route path="/StudentEnrolledClasses" element={<StudentEnrolledClasses />} />
           </Routes>
         </Suspense>
       </Router>

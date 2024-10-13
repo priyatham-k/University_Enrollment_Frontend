@@ -96,7 +96,7 @@ function Dashboard() {
           >
             <a
               className="sidebar-brand d-flex align-items-center justify-content-center"
-              href="index.html"
+              
             >
               <div className="sidebar-brand-icon rotate-n-15">
                 <i className="fas fa-laugh-wink"></i>
@@ -109,7 +109,7 @@ function Dashboard() {
             <hr className="sidebar-divider my-0"></hr>
 
             <li className="nav-item active">
-              <a className="nav-link" href="index.html">
+              <a className="nav-link">
                 <i className="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
               </a>
