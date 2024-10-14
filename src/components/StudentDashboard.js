@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../App.css";
 import axios from "axios";
 import StudentCourse from "./StudentCourse";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 function Dashboard() {
   const [formData, setFormData] = useState({
     studentName: "",
@@ -19,7 +21,8 @@ function Dashboard() {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
   };
-
+  const location = useLocation();
+  const isDashboard = location.pathname.includes("StudentDashboard");
   const validateForm = () => {
     let formErrors = {};
     if (!formData.studentName) formErrors.studentName = "Full name is required";
@@ -94,10 +97,7 @@ function Dashboard() {
             className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
             id="accordionSidebar"
           >
-            <a
-              className="sidebar-brand d-flex align-items-center justify-content-center"
-              
-            >
+            <a className="sidebar-brand d-flex align-items-center justify-content-center">
               <div className="sidebar-brand-icon rotate-n-15">
                 <i className="fas fa-laugh-wink"></i>
               </div>
@@ -108,25 +108,19 @@ function Dashboard() {
 
             <hr className="sidebar-divider my-0"></hr>
 
-            <li className="nav-item active">
-              <a className="nav-link">
-                <i className="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-              </a>
-            </li>
             <hr className="sidebar-divider"></hr>
             <div className="sidebar-heading">Interface</div>
-            <li className="nav-item">
-              <a className="nav-link collapsed">
+            <li className={`nav-item ${isDashboard ? "active" : ""}`}>
+              <Link className="nav-link collapsed" to="/StudentDashboard">
                 <i className="fas fa-fw fa-cog"></i>
                 <span>All Cources</span>
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link collapsed">
+              <Link className="nav-link collapsed" to="/StudentEnrolledClasses">
                 <i className="fas fa-fw fa-wrench"></i>
                 <span>Enrolled Classes</span>
-              </a>
+              </Link>
               <div id="collapseUtilities" className="collapse"></div>
             </li>
             <hr className="sidebar-divider"></hr>

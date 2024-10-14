@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 const StudentEnrolledClasses = () => {
   const [payments, setPayments] = useState([]);
+  const location = useLocation();
 
+  // Check if the current path matches a specific route
+  const isEnrolledClasses = location.pathname.includes(
+    "StudentEnrolledClasses"
+  );
+  const isDashboard = location.pathname.includes("StudentDashboard");
   useEffect(() => {
     // Retrieve user data from sessionStorage
     const userData = sessionStorage.getItem("user");
@@ -22,12 +29,15 @@ const StudentEnrolledClasses = () => {
     if (userData) {
       const user = JSON.parse(userData);
       const userId = user._id; // Get the user ID from sessionStorage
-      
+
       try {
         // Send DELETE request to drop the course
-        const response = await axios.post(`http://localhost:3001/api/user/dropCourse/${userId}`, {
-           courseId: paymentId // Send the payment._id as courseId in the body
-        });
+        const response = await axios.post(
+          `http://localhost:3001/api/user/dropCourse/${userId}`,
+          {
+            courseId: paymentId, // Send the payment._id as courseId in the body
+          }
+        );
 
         if (response.status === 200) {
           // Remove the dropped payment from the state
@@ -36,9 +46,11 @@ const StudentEnrolledClasses = () => {
           );
 
           // Update user data in sessionStorage as well
-          user.payment = user.payment.filter((payment) => payment._id !== paymentId);
+          user.payment = user.payment.filter(
+            (payment) => payment._id !== paymentId
+          );
           sessionStorage.setItem("user", JSON.stringify(user));
-          
+
           alert("Course dropped successfully.");
         }
       } catch (error) {
@@ -52,14 +64,12 @@ const StudentEnrolledClasses = () => {
     <div>
       <div id="page-top">
         <div id="wrapper">
-        <ul
+          <ul
             className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
             id="accordionSidebar"
           >
-            <a
-              className="sidebar-brand d-flex align-items-center justify-content-center"
-              
-            >
+            {/* Sidebar Brand */}
+            <a className="sidebar-brand d-flex align-items-center justify-content-center">
               <div className="sidebar-brand-icon rotate-n-15">
                 <i className="fas fa-laugh-wink"></i>
               </div>
@@ -68,35 +78,35 @@ const StudentEnrolledClasses = () => {
               </div>
             </a>
 
-            <hr className="sidebar-divider my-0"></hr>
+            <hr className="sidebar-divider my-0" />
 
-            <li className="nav-item active">
-              <a className="nav-link">
-                <i className="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-              </a>
-            </li>
-            <hr className="sidebar-divider"></hr>
+            <hr className="sidebar-divider" />
+
             <div className="sidebar-heading">Interface</div>
-            <li className="nav-item">
-              <a className="nav-link collapsed">
+
+            {/* All Courses link */}
+            <li className={`nav-item ${isDashboard ? "active" : ""}`}>
+              <Link className="nav-link collapsed" to="/StudentDashboard">
                 <i className="fas fa-fw fa-cog"></i>
-                <span>All Cources</span>
-              </a>
+                <span>All Courses</span>
+              </Link>
             </li>
-            <li className="nav-item">
+
+            {/* Enrolled Classes link */}
+            <li className={`nav-item ${isEnrolledClasses ? "active" : ""}`}>
               <a className="nav-link collapsed">
                 <i className="fas fa-fw fa-wrench"></i>
                 <span>Enrolled Classes</span>
               </a>
               <div id="collapseUtilities" className="collapse"></div>
             </li>
-            <hr className="sidebar-divider"></hr>
+
+            <hr className="sidebar-divider" />
           </ul>
 
           <div id="content-wrapper" className="d-flex flex-column">
             <div id="content">
-            <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+              <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                 <button
                   id="sidebarToggleTop"
                   className="btn btn-link d-md-none rounded-circle mr-3"
@@ -169,7 +179,11 @@ const StudentEnrolledClasses = () => {
                   <div className="card-body">
                     {payments.length > 0 ? (
                       <div className="table-responsive">
-                        <table className="table table-bordered" width="100%" cellSpacing="0">
+                        <table
+                          className="table table-bordered"
+                          width="100%"
+                          cellSpacing="0"
+                        >
                           <thead>
                             <tr>
                               <th>#</th>
@@ -187,7 +201,9 @@ const StudentEnrolledClasses = () => {
                                 <td>
                                   <button
                                     className="btn btn-danger"
-                                    onClick={() => handleDropCourse(payment._id)}
+                                    onClick={() =>
+                                      handleDropCourse(payment._id)
+                                    }
                                   >
                                     Drop Course
                                   </button>
@@ -198,7 +214,7 @@ const StudentEnrolledClasses = () => {
                         </table>
                       </div>
                     ) : (
-                      <p>No payments found.</p>
+                      <p>No classes Enrolled.</p>
                     )}
                   </div>
                 </div>
