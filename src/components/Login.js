@@ -12,26 +12,47 @@ function Login() {
 
   // New function to handle login for different roles
   const handleLogin = async (role) => {
+    sessionStorage.clear();
+
     setError(null); // Reset error state
 
     try {
+      let response;
       // API call using Axios
-      const response = await axios.post(
-        "http://localhost:3001/api/user/login",
-        {
+      if (role === "instructor") {
+        // If role is instructor, call instructor login API
+        response = await axios.post(
+          "http://localhost:3001/api/instructors/login",
+          {
+            email: username, // Use username as email for instructor login
+            password,
+            role,
+          }
+        );
+      } else {
+        // For all other roles, use the default user login API
+        response = await axios.post("http://localhost:3001/api/user/login", {
           username,
           password,
-          role, // Send the role with the login request
-        }
-      );
-        console.log(response)
+          role,
+        });
+      }
+
       if (response.data.message === "Login successful.") {
+        console.log(response);
         // Navigate based on the role
         sessionStorage.setItem("user", JSON.stringify(response.data.user));
         if (response.data.user.role === "student") {
-          navigate("/StudentDashboard");
+          if (
+            response.data.user.payment &&
+            response.data.user.payment.length > 0
+          ) {
+            navigate("/StudentEnrolledClasses");
+          } else {
+            navigate("/StudentDashboard");
+          }
         } else if (response.data.user.role === "instructor") {
-          navigate("/InstructorDashboard");
+          navigate("/InstructorDashBoard");
         } else if (response.data.user.role === "admin") {
           navigate("/AdminDashboard");
         }

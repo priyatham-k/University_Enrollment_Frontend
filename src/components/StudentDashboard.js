@@ -122,6 +122,15 @@ function Dashboard() {
                 <span>Enrolled Classes</span>
               </Link>
               <div id="collapseUtilities" className="collapse"></div>
+            </li>            <li className="nav-item">
+              <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
+                <i className="fas fa-fw fa-wrench"></i>
+                <Link className="small" to="/">
+                  <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+                    Logout
+                  </span>
+                </Link>
+              </a>
             </li>
             <hr className="sidebar-divider"></hr>
           </ul>
@@ -189,22 +198,22 @@ function Dashboard() {
                 </ul>
               </nav>
               <div className="container-fluid">
-                <div class=" mt-5">
+                <div className=" mt-5">
                   {applicationStatus === "pending" ? (
-                    <h2 class="text-center mb-4">
+                    <h2 className="text-center mb-4">
                       Your application is pending. Please wait for the review
                       process to complete.
                     </h2>
                   ) : applicationStatus === "approved" ? (
-                    <h2 class="text-center mb-4">
+                    <h2 className="text-center mb-4">
                       <StudentCourse />
                     </h2>
                   ) : applicationStatus === "Application not found" ? (
-                    <h2 class="text-center mb-4">
+                    <h2 className="text-center mb-4">
                       Graduation Application Form
                     </h2>
                   ) : (
-                    <h2 class="text-center mb-4">
+                    <h2 className="text-center mb-4">
                       Graduation Application Form
                     </h2>
                   )}

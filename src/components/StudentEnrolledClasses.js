@@ -17,6 +17,7 @@ const StudentEnrolledClasses = () => {
     const userData = sessionStorage.getItem("user");
     if (userData) {
       const user = JSON.parse(userData);
+      console.log(user)
       // Check if payment array exists and set it to state
       if (user.payment && Array.isArray(user.payment)) {
         setPayments(user.payment);
@@ -100,7 +101,16 @@ const StudentEnrolledClasses = () => {
               </a>
               <div id="collapseUtilities" className="collapse"></div>
             </li>
-
+            <li className="nav-item">
+              <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
+                <i className="fas fa-fw fa-wrench"></i>
+                <Link className="small" to="/">
+                  <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+                    Logout
+                  </span>
+                </Link>
+              </a>
+            </li>
             <hr className="sidebar-divider" />
           </ul>
 
@@ -173,7 +183,7 @@ const StudentEnrolledClasses = () => {
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
                     <h6 className="m-0 font-weight-bold text-primary">
-                      Enrolled Classes and Payments
+                      Enrolled Classes
                     </h6>
                   </div>
                   <div className="card-body">
@@ -188,7 +198,7 @@ const StudentEnrolledClasses = () => {
                             <tr>
                               <th>#</th>
                               <th>Course Name</th>
-                              <th>Date</th>
+                              <th>Class Cost</th>
                               <th>Actions</th>
                             </tr>
                           </thead>
@@ -197,7 +207,7 @@ const StudentEnrolledClasses = () => {
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{payment.courceName}</td>
-                                <td>{payment.date}</td>
+                                <td>$1000</td>
                                 <td>
                                   <button
                                     className="btn btn-danger"

@@ -50,7 +50,7 @@ const StudentCourse = () => {
   const handleRegisterCourse = (courseId) => {
     if (enrolledCourses.length >= 3) {
       toast.error(
-        "You can only register for a maximum of 3 courses.",
+        "You can only select for a maximum of 3 courses.",
         toastOptions
       );
       return;
@@ -61,7 +61,7 @@ const StudentCourse = () => {
     } else {
       const course = courses.find((course) => course._id === courseId);
       setEnrolledCourses((prev) => [...prev, { ...course, price: 1000 }]);
-      toast.success("Course added successfully!", toastOptions);
+      toast.success("Course selected successfully!", toastOptions);
     }
   };
 
@@ -70,7 +70,7 @@ const StudentCourse = () => {
       (course) => course._id !== courseId
     );
     setEnrolledCourses(updatedEnrolledCourses);
-    toast.success("Course dropped successfully!", toastOptions);
+    toast.success("Course unselected successfully!", toastOptions);
   };
 
   useEffect(() => {
@@ -85,62 +85,70 @@ const StudentCourse = () => {
     const confirmation = window.confirm(
       `Once payment is done for the subjects, if you drop any subject, only half of the amount will be returned. Total Amount: $${totalCost}. Do you want to proceed?`
     );
-     
+
     if (confirmation) {
       // Card validation logic
       const cardNumber = paymentDetails.cardNumber;
       const cardExpiry = paymentDetails.cardExpiry;
       const cardCVV = paymentDetails.cardCVV;
-  
+
       let cardErrors = {};
-      console.log(cardErrors) 
+      console.log(cardErrors);
       if (!cardNumber || !/^\d{16}$/.test(cardNumber)) {
         cardErrors.cardNumber = "Invalid card number. Must be 16 digits.";
       }
-  
+
       if (!cardExpiry || !/^(0[1-9]|1[0-2])\/?([0-9]{2})$/.test(cardExpiry)) {
         cardErrors.cardExpiry = "Invalid expiry date. Format should be MM/YY.";
       }
-  
+
       if (!cardCVV || !/^\d{3}$/.test(cardCVV)) {
         cardErrors.cardCVV = "Invalid CVC. Must be 3 digits.";
       }
-  
+
       if (Object.keys(cardErrors).length > 0) {
-        toast.error("Invalid card details. Please check your input.", toastOptions);
+        toast.error(
+          "Invalid card details. Please check your input.",
+          toastOptions
+        );
         return;
       }
-      
-  
+
       // Proceed with payment if no errors
       const paymentsPayload = {
         payments: enrolledCourses.map((course) => ({
           courseName: course.courseName,
           payment: "1000",
-        }))
+        })),
       };
-  
+
       try {
         const user = JSON.parse(sessionStorage.getItem("user"));
         const userId = user._id;
-        await axios.post(
+        const response = await axios.post(
           `http://localhost:3001/api/user/updatePayments/${userId}`,
           paymentsPayload
         );
-  
+        console.log(sessionStorage.setItem("test", JSON.stringify(response)));
+        user.payment = response.data.user.payment;
+
+        // Store the updated user object back to session storage
+        sessionStorage.setItem("user", JSON.stringify(user));
         setIsPaymentConfirmed(true);
         toast.success("Payment processed successfully!", toastOptions);
-  
+
         setTimeout(() => {
           window.location.href = "/StudentEnrolledClasses";
         }, 2000);
       } catch (err) {
         console.log(err);
-        toast.error(err.response?.data?.message || "Payment failed.", toastOptions);
+        toast.error(
+          err.response?.data?.message || "Payment failed.",
+          toastOptions
+        );
       }
     }
   };
-  
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
@@ -203,7 +211,7 @@ const StudentCourse = () => {
                                 }}
                                 onClick={() => handleDropCourse(course._id)}
                               >
-                                Drop Course
+                                unselect
                               </button>
                             ) : (
                               <button
@@ -215,7 +223,7 @@ const StudentCourse = () => {
                                 }}
                                 onClick={() => handleRegisterCourse(course._id)}
                               >
-                                Register Course
+                                Select
                               </button>
                             )}
                           </td>
@@ -289,88 +297,111 @@ const StudentCourse = () => {
 
           {/* Side-by-side Cards for Payment Details and Confirm Payment */}
           <div className="row">
-  {/* Credit Card Input Card */}
-  <div className="col-md-6">
-    <div className="card shadow mb-4">
-      <div className="card-header py-3 text-left">
-        <h5 className="m-0 font-weight-bold text-primary">
-          Payment Details
-        </h5>
-      </div>
-      <div className="card-body">
-        <div className="form-group">
-          <label htmlFor="cardNumber">Card Number</label>
-          <input
-            type="text"
-            className="form-control"
-            id="cardNumber"
-            name="cardNumber"
-            placeholder="Enter card number"
-            value={paymentDetails.cardNumber}
-            onChange={handlePaymentChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="cardExpiry">Expiry Date</label>
-          <input
-            type="text"
-            className="form-control"
-            id="cardExpiry"
-            name="cardExpiry"
-            placeholder="MM/YY"
-            value={paymentDetails.cardExpiry}
-            onChange={handlePaymentChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="cardCVV">CVV</label>
-          <input
-            type="text"
-            className="form-control"
-            id="cardCVV"
-            name="cardCVV"
-            placeholder="Enter CVV"
-            value={paymentDetails.cardCVV}
-            onChange={handlePaymentChange}
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+            {/* Credit Card Input Card */}
+            <div className="col-md-6">
+              <div className="card shadow mb-4">
+                <div className="card-header py-3 text-left">
+                  <h5 className="m-0 font-weight-bold text-primary">
+                    Payment Details
+                  </h5>
+                </div>
+                <div className="card-body">
+                  <div className="form-group">
+                    <label
+                      htmlFor="cardNumber"
+                      style={{
+                        float: "left",
+                        fontSize: "15px",
+                      }}
+                    >
+                      Card Number
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="cardNumber"
+                      name="cardNumber"
+                      placeholder="Enter card number"
+                      value={paymentDetails.cardNumber}
+                      onChange={handlePaymentChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label
+                      htmlFor="cardExpiry"
+                      style={{
+                        float: "left",
+                        fontSize: "15px",
+                      }}
+                    >
+                      Expiry Date
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="cardExpiry"
+                      name="cardExpiry"
+                      placeholder="MM/YY"
+                      value={paymentDetails.cardExpiry}
+                      onChange={handlePaymentChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label
+                      htmlFor="cardCVV"
+                      style={{
+                        float: "left",
+                        fontSize: "15px",
+                      }}
+                    >
+                      CVV
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="cardCVV"
+                      name="cardCVV"
+                      placeholder="Enter CVV"
+                      value={paymentDetails.cardCVV}
+                      onChange={handlePaymentChange}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  {/* Total Price and Confirm Payment Card */}
-  <div className="col-md-6">
-    <div className="card shadow mb-4">
-      <div className="card-header py-3 text-left">
-        <h5 className="m-0 font-weight-bold text-primary">
-          Confirm Payment
-        </h5>
-      </div>
-      <div className="card-body">
-        <h5>
-          Total Price: $
-          {enrolledCourses.reduce(
-            (total, course) => total + course.price,
-            0
-          )}
-        </h5>
-        <button
-          className="btn btn-primary"
-          onClick={handlePayment}
-          style={{ padding: "10px 20px", marginTop: "10px" }}
-          disabled={
-            enrolledCourses.length === 0 || isPaymentConfirmed
-          }
-        >
-          {isPaymentConfirmed
-            ? "Payment Confirmed"
-            : "Confirm Payment"}
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
+            {/* Total Price and Confirm Payment Card */}
+            <div className="col-md-6">
+              <div className="card shadow mb-4">
+                <div className="card-header py-3 text-left">
+                  <h5 className="m-0 font-weight-bold text-primary">
+                    Confirm Payment
+                  </h5>
+                </div>
+                <div className="card-body">
+                  <h5>
+                    Total Price: $
+                    {enrolledCourses.reduce(
+                      (total, course) => total + course.price,
+                      0
+                    )}
+                  </h5>
+                  <button
+                    className="btn btn-primary"
+                    onClick={handlePayment}
+                    style={{ padding: "10px 20px", marginTop: "10px" }}
+                    disabled={
+                      enrolledCourses.length === 0 || isPaymentConfirmed
+                    }
+                  >
+                    {isPaymentConfirmed
+                      ? "Payment Confirmed"
+                      : "Confirm Payment"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </>
       )}
     </div>

@@ -14,6 +14,7 @@ function Instructors() {
     email: "",
     password: "",
     department: "",
+    role:"instructor"
   });
 
   useEffect(() => {
@@ -34,7 +35,7 @@ function Instructors() {
   const handleCloseModal = () => {
     setShowModal(false);
     setIsEditing(false);
-    setFormData({ name: "", email: "", password: "", department: "" });
+    setFormData({ name: "", email: "", password: "", department: "", role:"instructor" });
   };
 
   const handleChange = (e) => {
@@ -59,7 +60,10 @@ function Instructors() {
 
     if (isEditing) {
       axios
-        .put(`http://localhost:3001/api/instructors/instructors/${editingInstructorId}`, formData)
+        .put(
+          `http://localhost:3001/api/instructors/instructors/${editingInstructorId}`,
+          formData
+        )
         .then((response) => {
           toast.success("Instructor updated successfully");
           setInstructors(
@@ -106,7 +110,9 @@ function Instructors() {
         .delete(`http://localhost:3001/api/instructors/instructors/${id}`)
         .then((response) => {
           toast.success("Instructor deleted successfully");
-          setInstructors(instructors.filter((instructor) => instructor._id !== id));
+          setInstructors(
+            instructors.filter((instructor) => instructor._id !== id)
+          );
         })
         .catch((error) => {
           console.error("Error deleting instructor:", error);
@@ -144,13 +150,15 @@ function Instructors() {
                 <td>{instructor.department}</td>
                 <td>
                   <button
-                    className="btn btn-warning me-2" style={{ width: "67px", height: "30px", padding: "0px" }}
+                    className="btn btn-warning me-2"
+                    style={{ width: "67px", height: "30px", padding: "0px" }}
                     onClick={() => handleEdit(instructor)}
                   >
                     Edit
                   </button>
                   <button
-                    className="btn btn-danger" style={{ width: "67px", height: "30px", padding: "0px" }}
+                    className="btn btn-danger"
+                    style={{ width: "67px", height: "30px", padding: "0px" }}
                     onClick={() => handleDelete(instructor._id)}
                   >
                     Delete
