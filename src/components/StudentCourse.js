@@ -93,7 +93,6 @@ const StudentCourse = () => {
       const cardCVV = paymentDetails.cardCVV;
 
       let cardErrors = {};
-      console.log(cardErrors);
       if (!cardNumber || !/^\d{16}$/.test(cardNumber)) {
         cardErrors.cardNumber = "Invalid card number. Must be 16 digits.";
       }

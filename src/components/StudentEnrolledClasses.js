@@ -17,7 +17,7 @@ const StudentEnrolledClasses = () => {
     const userData = sessionStorage.getItem("user");
     if (userData) {
       const user = JSON.parse(userData);
-      console.log(user)
+      console.log(user);
       // Check if payment array exists and set it to state
       if (user.payment && Array.isArray(user.payment)) {
         setPayments(user.payment);
@@ -72,11 +72,9 @@ const StudentEnrolledClasses = () => {
             {/* Sidebar Brand */}
             <a className="sidebar-brand d-flex align-items-center justify-content-center">
               <div className="sidebar-brand-icon rotate-n-15">
-                <i className="fas fa-laugh-wink"></i>
+                <i className="fas fa-university"></i>
               </div>
-              <div className="sidebar-brand-text mx-3">
-                SB Admin <sup>2</sup>
-              </div>
+              <div className="sidebar-brand-text mx-3">UNIVERSITY OF TEXAS</div>
             </a>
 
             <hr className="sidebar-divider my-0" />
@@ -88,24 +86,43 @@ const StudentEnrolledClasses = () => {
             {/* All Courses link */}
             <li className={`nav-item ${isDashboard ? "active" : ""}`}>
               <Link className="nav-link collapsed" to="/StudentDashboard">
-                <i className="fas fa-fw fa-cog"></i>
-                <span>All Courses</span>
+                <i
+                  className="fas fa-book"
+                  style={{ marginRight: "12px", fontSize: "14px" }}
+                ></i>
+                <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                  All Courses
+                </span>
               </Link>
             </li>
 
             {/* Enrolled Classes link */}
             <li className={`nav-item ${isEnrolledClasses ? "active" : ""}`}>
               <a className="nav-link collapsed">
-                <i className="fas fa-fw fa-wrench"></i>
-                <span>Enrolled Classes</span>
+                <i
+                  className="fas fa-fw fa-wrench"
+                  style={{ marginRight: "12px", fontSize: "14px" }}
+                ></i>
+                <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                  Enrolled Classes
+                </span>
               </a>
               <div id="collapseUtilities" className="collapse"></div>
             </li>
             <li className="nav-item">
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
-                <i className="fas fa-fw fa-wrench"></i>
+                <i
+                  className="fas fa-fw fa-wrench"
+                  style={{ marginRight: "12px", fontSize: "14px" }}
+                ></i>
                 <Link className="small" to="/">
-                  <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+                  <span
+                    style={{
+                      color: "rgba(255, 255, 255, 0.8)",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                    }}
+                  >
                     Logout
                   </span>
                 </Link>
@@ -145,7 +162,7 @@ const StudentEnrolledClasses = () => {
                   <li className="nav-item dropdown no-arrow">
                     <a>
                       <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                        Douglas McGee
+                      
                       </span>
                     </a>
                     <div

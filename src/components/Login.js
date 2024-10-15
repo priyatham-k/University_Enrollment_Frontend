@@ -39,7 +39,6 @@ function Login() {
       }
 
       if (response.data.message === "Login successful.") {
-        console.log(response);
         // Navigate based on the role
         sessionStorage.setItem("user", JSON.stringify(response.data.user));
         if (response.data.user.role === "student") {

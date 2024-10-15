@@ -29,29 +29,30 @@ function InstructorDashBoard() {
           <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion">
             <a className="sidebar-brand d-flex align-items-center justify-content-center">
               <div className="sidebar-brand-icon rotate-n-15">
-                <i className="fas fa-laugh-wink"></i>
+              <i className="fas fa-university"></i>
               </div>
               <div className="sidebar-brand-text mx-3">
-                SB Admin <sup>2</sup>
+                UNIVERSITY OF TEXAS
               </div>
             </a>
             <hr className="sidebar-divider my-0" />
             <hr className="sidebar-divider" />
-            <div className="sidebar-heading">Interface</div>
+            <div className="sidebar-heading">MENU</div>
             <li className="nav-item">
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
-                <i className="fas fa-fw fa-cog"></i>
-                <span>Course Data</span>
+                <i className="fas fa-book" style={{ marginRight: '12px', fontSize: '15px' }}></i>
+                <span style={{ fontSize: '14px',fontWeight:"600" }}>Course Data</span>
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
-                <i className="fas fa-fw fa-wrench"></i>
+                <i className="fas fa-sign-out-alt" style={{ marginRight: '12px', fontSize: '15px' }}></i>
                 <Link className="small" to="/">
-                  <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
-                    Logout
-                  </span>
-                </Link>
+  <span style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "14px", fontWeight: "600" }}>
+    Logout
+  </span>
+</Link>
+
               </a>
             </li>
             <hr className="sidebar-divider" />
@@ -92,7 +93,6 @@ function InstructorDashBoard() {
                           <tr>
                             <th>Course Name</th>
                             <th>Course Code</th>
-                            <th>Course Number</th>
                             <th>Description</th>
                             <th>Term</th>
                           </tr>
@@ -107,7 +107,6 @@ function InstructorDashBoard() {
                               <tr key={course._id}>
                                 <td>{course.courseName}</td>
                                 <td>{course.courseCode}</td>
-                                <td>{course.courseNumber}</td>
                                 <td>{course.description}</td>
                                 <td>{course.term}</td>
                               </tr>

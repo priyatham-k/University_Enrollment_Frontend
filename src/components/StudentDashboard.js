@@ -99,34 +99,50 @@ function Dashboard() {
           >
             <a className="sidebar-brand d-flex align-items-center justify-content-center">
               <div className="sidebar-brand-icon rotate-n-15">
-                <i className="fas fa-laugh-wink"></i>
+                <i className="fas fa-university"></i>
               </div>
-              <div className="sidebar-brand-text mx-3">
-                SB Admin <sup>2</sup>
-              </div>
+              <div className="sidebar-brand-text mx-3">UNIVERSITY OF TEXAS</div>
             </a>
-
             <hr className="sidebar-divider my-0"></hr>
-
             <hr className="sidebar-divider"></hr>
             <div className="sidebar-heading">Interface</div>
             <li className={`nav-item ${isDashboard ? "active" : ""}`}>
               <Link className="nav-link collapsed" to="/StudentDashboard">
-                <i className="fas fa-fw fa-cog"></i>
-                <span>All Cources</span>
+                <i
+                  className="fas fa-book"
+                  style={{ marginRight: "12px", fontSize: "15px" }}
+                ></i>
+                <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                  All Cources
+                </span>
               </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link collapsed" to="/StudentEnrolledClasses">
-                <i className="fas fa-fw fa-wrench"></i>
-                <span>Enrolled Classes</span>
+                <i
+                  className="fas fa-fw fa-wrench"
+                  style={{ marginRight: "12px", fontSize: "15px" }}
+                ></i>
+                <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                  Enrolled Classes
+                </span>
               </Link>
               <div id="collapseUtilities" className="collapse"></div>
-            </li>            <li className="nav-item">
+            </li>{" "}
+            <li className="nav-item">
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
-                <i className="fas fa-fw fa-wrench"></i>
+                <i
+                  className="fas fa-fw fa-wrench"
+                  style={{ marginRight: "12px", fontSize: "15px" }}
+                ></i>
                 <Link className="small" to="/">
-                  <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+                  <span
+                    style={{
+                      color: "rgba(255, 255, 255, 0.8)",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                    }}
+                  >
                     Logout
                   </span>
                 </Link>
