@@ -111,7 +111,7 @@ function Instructors() {
   return (
     <div style={{ fontSize: "12px" }}>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1 style={{ fontSize: "12px" }}>Instructors List</h1>
+        <h5><b >Instructors List</b></h5>
         <button className="btn btn-primary" onClick={handleOpenModal} style={{ fontSize: "12px" }}>
           Add Instructor
         </button>

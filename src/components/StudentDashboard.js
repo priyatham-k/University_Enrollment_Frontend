@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../App.css";
 import axios from "axios";
 import StudentCourse from "./StudentCourse";
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+
 function Dashboard() {
   const [formData, setFormData] = useState({
     studentName: "",
@@ -16,13 +16,17 @@ function Dashboard() {
   });
   const [errors, setErrors] = useState({});
   const [applicationStatus, setApplicationStatus] = useState(null);
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
   };
+
   const location = useLocation();
   const isDashboard = location.pathname.includes("StudentDashboard");
+
   const validateForm = () => {
     let formErrors = {};
     if (!formData.studentName) formErrors.studentName = "Full name is required";
@@ -74,6 +78,9 @@ function Dashboard() {
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user && user._id) {
+      setUsername(user.username);
+      setRole(user.role);
+
       axios
         .get(`http://localhost:3001/api/applicationstatus/${user._id}`)
         .then((response) => {
@@ -98,7 +105,7 @@ function Dashboard() {
             </a>
             <hr className="sidebar-divider my-0"></hr>
             <hr className="sidebar-divider"></hr>
-            <div className="sidebar-heading" style={{ fontSize: "12px" }}>Interface</div>
+            <div className="sidebar-heading" style={{ fontSize: "12px" }}>MENU</div>
             <li className={`nav-item ${isDashboard ? "active" : ""}`}>
               <Link className="nav-link collapsed" to="/StudentDashboard">
                 <i className="fas fa-book" style={{ marginRight: "12px", fontSize: "12px" }}></i>
@@ -133,7 +140,7 @@ function Dashboard() {
                   <li className="nav-item dropdown no-arrow">
                     <a>
                       <span className="mr-2 d-none d-lg-inline text-gray-600 small" style={{ fontSize: "12px" }}>
-                        Douglas McGee
+                        {username} <br></br> {role}
                       </span>
                     </a>
                   </li>

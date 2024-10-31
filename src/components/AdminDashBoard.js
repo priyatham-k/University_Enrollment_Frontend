@@ -7,6 +7,7 @@ import Instructors from "./Instructors";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("StudentList");
   const [showModal, setShowModal] = useState(false);
@@ -20,25 +21,33 @@ function AdminDashboard() {
     email: "",
     password: "",
   });
-  const [courses, setCourses] = useState([]); // State to store fetched courses
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
-  const [successMessage, setSuccessMessage] = useState(""); // State for success message
-  const [loading, setLoading] = useState(false); // State for loading state
+  const [courses, setCourses] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
 
-  // Fetch the courses when the component loads or the active section is 'courses'
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (user) {
+      setUsername(user.username);
+      setRole(user.role);
+    }
+  }, []);
+
   useEffect(() => {
     if (activeSection === "courses") {
       fetchCourses();
     }
   }, [activeSection]);
 
-  // Function to fetch courses from the API
   const fetchCourses = async () => {
     try {
       const response = await axios.get(
         "http://localhost:3001/api/courses/allCourses"
       );
-      setCourses(response.data); // Store the fetched data in state
+      setCourses(response.data);
     } catch (error) {
       console.error("Error fetching courses:", error.message);
       setErrorMessage("Failed to fetch courses. Please try again later.");
@@ -67,7 +76,6 @@ function AdminDashboard() {
     setSuccessMessage("");
 
     try {
-      // First, create the instructor
       const instructorResponse = await axios.post(
         "http://localhost:3001/api/instructors/add",
         instructorDetails
@@ -76,13 +84,11 @@ function AdminDashboard() {
         throw new Error("Failed to add instructor");
       }
 
-      // Add instructor ID to the course details
       const updatedCourseDetails = {
         ...courseDetails,
         instructor: instructorDetails,
       };
 
-      // Then, create the course
       const courseResponse = await axios.post(
         "http://localhost:3001/api/courses/add",
         updatedCourseDetails
@@ -91,15 +97,11 @@ function AdminDashboard() {
         throw new Error("Failed to add course");
       }
 
-      // Reset forms and close modal
       setCourseDetails({ courseName: "", courseCode: "", classDay: "" });
       setInstructorDetails({ name: "", email: "", password: "" });
       setShowModal(false);
 
-      // Show success message
       setSuccessMessage("Course and instructor added successfully!");
-
-      // Fetch the updated list of courses after adding a new one
       fetchCourses();
     } catch (error) {
       console.error("Error:", error.message);
@@ -110,7 +112,7 @@ function AdminDashboard() {
   };
 
   return (
-    <div>
+    <div style={{ fontSize: "12px" }}>
       <div id="page-top">
         <div id="wrapper">
           <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion">
@@ -122,7 +124,7 @@ function AdminDashboard() {
             </a>
             <hr className="sidebar-divider my-0" />
             <hr className="sidebar-divider" />
-            <div className="sidebar-heading">Interface</div>
+            <div className="sidebar-heading">MENU</div>
             <li
               className={`nav-item ${
                 activeSection === "StudentList" ? "active" : ""
@@ -135,11 +137,9 @@ function AdminDashboard() {
               >
                 <i
                   className="fas fa-fw fa-cog"
-                  style={{ marginRight: "12px", fontSize: "15px" }}
+                  style={{ marginRight: "12px" }}
                 ></i>
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Students
-                </span>
+                <span style={{ fontWeight: "600" }}>Students</span>
               </a>
             </li>
             <li
@@ -154,13 +154,11 @@ function AdminDashboard() {
               >
                 <i
                   className="fas fa-fw fa-wrench"
-                  style={{ marginRight: "12px", fontSize: "15px" }}
+                  style={{ marginRight: "12px" }}
                 ></i>
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Courses
-                </span>
+                <span style={{ fontWeight: "600" }}>Courses</span>
               </a>
-            </li>{" "}
+            </li>
             <li
               className={`nav-item ${
                 activeSection === "Instructors" ? "active" : ""
@@ -173,24 +171,21 @@ function AdminDashboard() {
               >
                 <i
                   className="fas fa-fw fa-wrench"
-                  style={{ marginRight: "12px", fontSize: "15px" }}
+                  style={{ marginRight: "12px" }}
                 ></i>
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Instructors
-                </span>
+                <span style={{ fontWeight: "600" }}>Instructors</span>
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
                 <i
                   className="fas fa-fw fa-wrench"
-                  style={{ marginRight: "12px", fontSize: "15px" }}
+                  style={{ marginRight: "12px" }}
                 ></i>
                 <Link className="small" to="/">
                   <span
                     style={{
                       color: "rgba(255, 255, 255, 0.8)",
-                      fontSize: "14px",
                       fontWeight: "600",
                     }}
                   >
@@ -217,7 +212,11 @@ function AdminDashboard() {
                   <li className="nav-item dropdown no-arrow">
                     <a>
                       <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                        Douglas McGee
+                        {username}
+                      </span>
+                      <br />
+                      <span className="d-none d-lg-inline text-gray-600 small">
+                        {role}
                       </span>
                     </a>
                   </li>

@@ -151,7 +151,7 @@ const Courses = () => {
     <div style={{ fontSize: "12px" }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5" sx={{ fontSize: "12px" }}>
-          Courses
+          <b>Courses List</b>
         </Typography>
         <Button
           variant="contained"

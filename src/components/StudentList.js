@@ -21,7 +21,7 @@ const StudentList = () => {
   return (
     <div>
       <Typography variant="h5" gutterBottom sx={{ fontSize: "16px", marginBottom: "16px" }}>
-        Student List
+        <b>Student List</b>
       </Typography>
       <TableContainer component={Paper} variant="outlined" sx={{ border: "1px solid #ccc" }}>
         <Table sx={{ minWidth: 650, borderCollapse: "collapse" }} aria-label="student table">
@@ -29,7 +29,8 @@ const StudentList = () => {
             <TableRow>
               <TableCell align="left" sx={{ fontWeight: "bold", fontSize: "12px", border: "1px solid #ccc" }}>Username</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold", fontSize: "12px", border: "1px solid #ccc" }}>Role</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold", fontSize: "12px", border: "1px solid #ccc" }}>Enrolled Courses</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold", fontSize: "12px", border: "1px solid #ccc" }}>Enrolled Courses (Course Name - Section)</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold", fontSize: "12px", border: "1px solid #ccc" }}>Payment Details</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -38,9 +39,14 @@ const StudentList = () => {
                 <TableCell align="left" sx={{ fontSize: "12px", border: "1px solid #ccc" }}>{student.username}</TableCell>
                 <TableCell align="left" sx={{ fontSize: "12px", border: "1px solid #ccc" }}>{student.role}</TableCell>
                 <TableCell align="left" sx={{ fontSize: "12px", border: "1px solid #ccc" }}>
-                  {student.enrolledCourses.length > 0
-                    ? student.enrolledCourses.map((course) => course.courseName).join(", ")
+                  {student.payment.length > 0
+                    ? student.payment.map((payment) => `${payment.courseName} - ${payment.sectionName}`).join(", ")
                     : "No courses enrolled"}
+                </TableCell>
+                <TableCell align="left" sx={{ fontSize: "12px", border: "1px solid #ccc" }}>
+                  {student.payment.length > 0
+                    ? student.payment.map((payment) => `$${payment.amount}`).join(", ")
+                    : "No payments"}
                 </TableCell>
               </TableRow>
             ))}

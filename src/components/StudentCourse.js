@@ -69,15 +69,16 @@ const StudentCourse = () => {
     const confirmation = window.confirm(
       `Once payment is done for the subjects, if you drop any subject, only half of the amount will be returned. Total Amount: $${totalCost}. Do you want to proceed?`
     );
-
+  
     if (confirmation) {
       const paymentsPayload = {
         payments: enrolledSections.map((section) => ({
-          courseName: section.sectionName,
-          payment: "1000",
+          courseName: courses.find((course) => course._id === section.courseId)?.courseName || "Unknown",
+          sectionName: section.sectionName,
+          amount: "1000", // Fixed price per section
         })),
       };
-
+      
       try {
         const user = JSON.parse(sessionStorage.getItem("user"));
         const userId = user._id;
@@ -89,7 +90,7 @@ const StudentCourse = () => {
         sessionStorage.setItem("user", JSON.stringify(user));
         setIsPaymentConfirmed(true);
         toast.success("Payment processed successfully!", toastOptions);
-
+  
         setTimeout(() => {
           window.location.href = "/StudentEnrolledClasses";
         }, 2000);
@@ -98,6 +99,7 @@ const StudentCourse = () => {
       }
     }
   };
+  
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
@@ -123,7 +125,7 @@ const StudentCourse = () => {
                       <th>Course Code</th>
                       <th>Description</th>
                       <th>Term</th>
-                      <th>Sections</th>
+                      <th>Sections - Instructor</th>
                     </tr>
                   </thead>
                   <tbody>
