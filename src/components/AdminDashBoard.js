@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
-import ApplicationList from "./ApplicationList";
+import StudentList from "./StudentList";
 import Courses from "./Courses";
 import Instructors from "./Instructors";
 import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 function AdminDashboard() {
-  const [activeSection, setActiveSection] = useState("ApplicationList");
+  const [activeSection, setActiveSection] = useState("StudentList");
   const [showModal, setShowModal] = useState(false);
   const [courseDetails, setCourseDetails] = useState({
     courseName: "",
@@ -123,12 +125,12 @@ function AdminDashboard() {
             <div className="sidebar-heading">Interface</div>
             <li
               className={`nav-item ${
-                activeSection === "ApplicationList" ? "active" : ""
+                activeSection === "StudentList" ? "active" : ""
               }`}
             >
               <a
                 className="nav-link collapsed"
-                onClick={() => handleSectionSwitch("ApplicationList")}
+                onClick={() => handleSectionSwitch("StudentList")}
                 style={{ cursor: "pointer" }}
               >
                 <i
@@ -136,7 +138,7 @@ function AdminDashboard() {
                   style={{ marginRight: "12px", fontSize: "15px" }}
                 ></i>
                 <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Applications
+                  Students
                 </span>
               </a>
             </li>
@@ -230,7 +232,7 @@ function AdminDashboard() {
                   <div className="alert alert-danger">{errorMessage}</div>
                 )}
                 {activeSection === "courses" && <Courses courses={courses} />}
-                {activeSection === "ApplicationList" && <ApplicationList />}
+                {activeSection === "StudentList" && <StudentList />}
                 {activeSection === "Instructors" && <Instructors />}
               </div>
             </div>

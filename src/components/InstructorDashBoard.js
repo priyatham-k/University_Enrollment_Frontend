@@ -5,17 +5,26 @@ import "../App.css";
 
 function InstructorDashBoard() {
   const [courses, setCourses] = useState([]);
+  const [username, setUsername] = useState("");
 
-  // Fetch courses when the component mounts
   useEffect(() => {
     const fetchCourses = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3001/api/courses/instructor/670e8773d2592a5ecc732ef9"
-        );
-        setCourses(response.data); // Set the courses data
-      } catch (error) {
-        console.error("Error fetching courses:", error);
+      const userData = sessionStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        const instructorId = user._id;
+        setUsername(user.username); // Assuming 'username' is the property for the instructor’s name
+
+        try {
+          const response = await axios.get(
+            `http://localhost:3001/api/courses/instructor/${instructorId}`
+          );
+          setCourses(response.data);
+        } catch (error) {
+          console.error("Error fetching courses:", error);
+        }
+      } else {
+        console.error("User not found in sessionStorage.");
       }
     };
 
@@ -29,30 +38,29 @@ function InstructorDashBoard() {
           <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion">
             <a className="sidebar-brand d-flex align-items-center justify-content-center">
               <div className="sidebar-brand-icon rotate-n-15">
-              <i className="fas fa-university"></i>
+                <i className="fas fa-university" style={{ fontSize: "12px" }}></i>
               </div>
-              <div className="sidebar-brand-text mx-3">
+              <div className="sidebar-brand-text mx-3" style={{ fontSize: "12px" }}>
                 UNIVERSITY OF TEXAS
               </div>
             </a>
             <hr className="sidebar-divider my-0" />
             <hr className="sidebar-divider" />
-            <div className="sidebar-heading">MENU</div>
-            <li className="nav-item">
+            <div className="sidebar-heading" style={{ fontSize: "12px" }}>MENU</div>
+            <li className="nav-item active"> {/* Highlight this item */}
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
-                <i className="fas fa-book" style={{ marginRight: '12px', fontSize: '15px' }}></i>
-                <span style={{ fontSize: '14px',fontWeight:"600" }}>Course Data</span>
+                <i className="fas fa-book" style={{ marginRight: "12px", fontSize: "12px" }}></i>
+                <span style={{ fontSize: "12px", fontWeight: "600" }}>Assigned Courses</span>
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
-                <i className="fas fa-sign-out-alt" style={{ marginRight: '12px', fontSize: '15px' }}></i>
+                <i className="fas fa-sign-out-alt" style={{ marginRight: "12px", fontSize: "12px" }}></i>
                 <Link className="small" to="/">
-  <span style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "14px", fontWeight: "600" }}>
-    Logout
-  </span>
-</Link>
-
+                  <span style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "12px", fontWeight: "600" }}>
+                    Logout
+                  </span>
+                </Link>
               </a>
             </li>
             <hr className="sidebar-divider" />
@@ -63,6 +71,7 @@ function InstructorDashBoard() {
                 <button
                   id="sidebarToggleTop"
                   className="btn btn-link d-md-none rounded-circle mr-3"
+                  style={{ fontSize: "12px" }}
                 >
                   <i className="fa fa-bars"></i>
                 </button>
@@ -71,46 +80,52 @@ function InstructorDashBoard() {
                   <div className="topbar-divider d-none d-sm-block"></div>
                   <li className="nav-item dropdown no-arrow">
                     <a>
-                      <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                        Douglas McGee
+                      <span className="mr-2 d-none d-lg-inline text-gray-600 small" style={{ fontSize: "12px" }}>
+                        {username}
                       </span>
                     </a>
                   </li>
                 </ul>
               </nav>
 
-              <div className="container-fluid">
+              <div className="container-fluid" style={{ fontSize: "12px" }}>
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">
+                    <h6 className="m-0 font-weight-bold text-primary" style={{ fontSize: "12px" }}>
                       Instructor Courses
                     </h6>
                   </div>
                   <div className="card-body">
                     <div className="table-responsive">
-                      <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
+                      <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0" style={{ fontSize: "12px" }}>
                         <thead>
                           <tr>
                             <th>Course Name</th>
                             <th>Course Code</th>
                             <th>Description</th>
                             <th>Term</th>
+                            <th>Section Name</th>
                           </tr>
                         </thead>
                         <tbody>
                           {courses.length === 0 ? (
                             <tr>
-                              <td colSpan="5" className="text-center">No courses found</td>
+                              <td colSpan="5" className="text-center" style={{ fontSize: "12px" }}>
+                                No courses found
+                              </td>
                             </tr>
                           ) : (
-                            courses.map((course) => (
-                              <tr key={course._id}>
-                                <td>{course.courseName}</td>
-                                <td>{course.courseCode}</td>
-                                <td>{course.description}</td>
-                                <td>{course.term}</td>
-                              </tr>
-                            ))
+                            courses.map((course) =>
+                              course.sections.map((section) => (
+                                <tr key={section._id}>
+                                  <td>{course.courseName}</td>
+                                  <td>{course.courseCode}</td>
+                                  <td>{course.description}</td>
+                                  <td>{course.term}</td>
+                                  <td>{section.sectionName}</td>
+                                </tr>
+                              ))
+                            )
                           )}
                         </tbody>
                       </table>

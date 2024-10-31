@@ -3,6 +3,7 @@ import "../App.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+
 const StudentEnrolledClasses = () => {
   const [payments, setPayments] = useState([]);
   const location = useLocation();
@@ -12,6 +13,7 @@ const StudentEnrolledClasses = () => {
     "StudentEnrolledClasses"
   );
   const isDashboard = location.pathname.includes("StudentDashboard");
+
   useEffect(() => {
     // Retrieve user data from sessionStorage
     const userData = sessionStorage.getItem("user");
@@ -74,23 +76,23 @@ const StudentEnrolledClasses = () => {
               <div className="sidebar-brand-icon rotate-n-15">
                 <i className="fas fa-university"></i>
               </div>
-              <div className="sidebar-brand-text mx-3">UNIVERSITY OF TEXAS</div>
+              <div className="sidebar-brand-text mx-3" style={{ fontSize: "12px" }}>UNIVERSITY OF TEXAS</div>
             </a>
 
             <hr className="sidebar-divider my-0" />
 
             <hr className="sidebar-divider" />
 
-            <div className="sidebar-heading">Interface</div>
+            <div className="sidebar-heading" style={{ fontSize: "12px" }}>Interface</div>
 
             {/* All Courses link */}
             <li className={`nav-item ${isDashboard ? "active" : ""}`}>
               <Link className="nav-link collapsed" to="/StudentDashboard">
                 <i
                   className="fas fa-book"
-                  style={{ marginRight: "12px", fontSize: "14px" }}
+                  style={{ marginRight: "12px", fontSize: "12px" }}
                 ></i>
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                <span style={{ fontSize: "12px", fontWeight: "600" }}>
                   All Courses
                 </span>
               </Link>
@@ -101,9 +103,9 @@ const StudentEnrolledClasses = () => {
               <a className="nav-link collapsed">
                 <i
                   className="fas fa-fw fa-wrench"
-                  style={{ marginRight: "12px", fontSize: "14px" }}
+                  style={{ marginRight: "12px", fontSize: "12px" }}
                 ></i>
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                <span style={{ fontSize: "12px", fontWeight: "600" }}>
                   Enrolled Classes
                 </span>
               </a>
@@ -113,13 +115,13 @@ const StudentEnrolledClasses = () => {
               <a className="nav-link collapsed" style={{ cursor: "pointer" }}>
                 <i
                   className="fas fa-fw fa-wrench"
-                  style={{ marginRight: "12px", fontSize: "14px" }}
+                  style={{ marginRight: "12px", fontSize: "12px" }}
                 ></i>
                 <Link className="small" to="/">
                   <span
                     style={{
                       color: "rgba(255, 255, 255, 0.8)",
-                      fontSize: "14px",
+                      fontSize: "12px",
                       fontWeight: "600",
                     }}
                   >
@@ -140,44 +142,28 @@ const StudentEnrolledClasses = () => {
                 >
                   <i className="fa fa-bars"></i>
                 </button>
-                <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control bg-light border-0 small"
-                      placeholder="Search for..."
-                      aria-label="Search"
-                      aria-describedby="basic-addon2"
-                    ></input>
-                    <div className="input-group-append">
-                      <button className="btn btn-primary" type="button">
-                        <i className="fas fa-search fa-sm"></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
+  
 
                 <ul className="navbar-nav ml-auto">
                   <div className="topbar-divider d-none d-sm-block"></div>
                   <li className="nav-item dropdown no-arrow">
                     <a>
-                      <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                      
+                      <span className="mr-2 d-none d-lg-inline text-gray-600 small" style={{ fontSize: "12px" }}>
                       </span>
                     </a>
                     <div
                       className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                       aria-labelledby="userDropdown"
                     >
-                      <a className="dropdown-item">
+                      <a className="dropdown-item" style={{ fontSize: "12px" }}>
                         <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                         Profile
                       </a>
-                      <a className="dropdown-item">
+                      <a className="dropdown-item" style={{ fontSize: "12px" }}>
                         <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                         Settings
                       </a>
-                      <a className="dropdown-item">
+                      <a className="dropdown-item" style={{ fontSize: "12px" }}>
                         <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                         Activity Log
                       </a>
@@ -186,6 +172,7 @@ const StudentEnrolledClasses = () => {
                         className="dropdown-item"
                         data-toggle="modal"
                         data-target="#logoutModal"
+                        style={{ fontSize: "12px" }}
                       >
                         <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                         Logout
@@ -199,17 +186,18 @@ const StudentEnrolledClasses = () => {
                 {/* Card to display payments */}
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">
+                    <h6 className="m-0 font-weight-bold text-primary" style={{ fontSize: "12px" }}>
                       Enrolled Classes
                     </h6>
                   </div>
-                  <div className="card-body">
+                  <div className="card-body" style={{ fontSize: "12px" }}>
                     {payments.length > 0 ? (
                       <div className="table-responsive">
                         <table
                           className="table table-bordered"
                           width="100%"
                           cellSpacing="0"
+                          style={{ fontSize: "12px" }}
                         >
                           <thead>
                             <tr>
@@ -231,6 +219,7 @@ const StudentEnrolledClasses = () => {
                                     onClick={() =>
                                       handleDropCourse(payment._id)
                                     }
+                                    style={{ fontSize: "12px" }}
                                   >
                                     Drop Course
                                   </button>
@@ -247,7 +236,6 @@ const StudentEnrolledClasses = () => {
                 </div>
               </div>
             </div>
-            {/* Footer if needed */}
           </div>
         </div>
       </div>
