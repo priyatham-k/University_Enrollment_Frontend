@@ -6,7 +6,7 @@ import "../App.css";
 function InstructorDashBoard() {
   const [courses, setCourses] = useState([]);
   const [username, setUsername] = useState("");
-
+  const [role, setRole] = useState("");
   useEffect(() => {
     const fetchCourses = async () => {
       const userData = sessionStorage.getItem("user");
@@ -14,7 +14,7 @@ function InstructorDashBoard() {
         const user = JSON.parse(userData);
         const instructorId = user._id;
         setUsername(user.username);
-
+        setRole(user.role);
         try {
           const response = await axios.get(
             `http://localhost:3001/api/courses/instructor/${instructorId}`
@@ -80,6 +80,8 @@ function InstructorDashBoard() {
                     <a>
                       <span className="mr-2 d-none d-lg-inline text-gray-600 small" style={{ fontSize: "12px" }}>
                         {username}
+                      </span><span className="d-none d-lg-inline text-gray-600 small">
+                        Role: {role}
                       </span>
                     </a>
                   </li>

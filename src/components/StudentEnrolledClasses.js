@@ -6,14 +6,16 @@ import { Link, useLocation } from "react-router-dom";
 const StudentEnrolledClasses = () => {
   const [payments, setPayments] = useState([]);
   const location = useLocation();
-
+  const [username, setUsername] = useState("");
   const isEnrolledClasses = location.pathname.includes("StudentEnrolledClasses");
   const isDashboard = location.pathname.includes("StudentDashboard");
-
+  const [role, setRole] = useState("");
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
     if (userData) {
       const user = JSON.parse(userData);
+      setUsername(user.username);
+      setRole(user.role);
       if (user.payment && Array.isArray(user.payment)) {
         setPayments(user.payment);
       }
@@ -102,7 +104,16 @@ const StudentEnrolledClasses = () => {
                 </button>
 
                 <ul className="navbar-nav ml-auto">
-                  <div className="topbar-divider d-none d-sm-block"></div>
+                  <div className="topbar-divider d-none d-sm-block"></div><li className="nav-item dropdown no-arrow">
+                    <a>
+                      <span className="mr-2 d-none d-lg-inline text-gray-600 small" style={{ fontSize: "12px" }}>
+                        {username}
+                      </span><br />
+                      <span className="d-none d-lg-inline text-gray-600 small">
+                        Role: {role}
+                      </span>
+                    </a>
+                  </li>
                 </ul>
               </nav>
 

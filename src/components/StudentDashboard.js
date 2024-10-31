@@ -140,7 +140,7 @@ function Dashboard() {
                   <li className="nav-item dropdown no-arrow">
                     <a>
                       <span className="mr-2 d-none d-lg-inline text-gray-600 small" style={{ fontSize: "12px" }}>
-                        {username} <br></br> {role}
+                        {username} <br></br> Role:{role}
                       </span>
                     </a>
                   </li>

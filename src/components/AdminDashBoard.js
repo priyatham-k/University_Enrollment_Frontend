@@ -216,7 +216,7 @@ function AdminDashboard() {
                       </span>
                       <br />
                       <span className="d-none d-lg-inline text-gray-600 small">
-                        {role}
+                      Role:{role}
                       </span>
                     </a>
                   </li>
