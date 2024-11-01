@@ -114,7 +114,7 @@ const StudentCourse = () => {
         <>
           <div className="card shadow mb-4" style={{ fontSize: "12px" }}>
             <div className="card-header py-3 text-left">
-              <h5 className="m-0 font-weight-bold text-primary">All Courses</h5>
+              <h5 className="m-0 font-weight-bold text-primary" style={{ fontSize: "12px" }}>All Courses</h5>
             </div>
             <div className="card-body">
               <div className="table-responsive">
