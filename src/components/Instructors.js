@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  Button,
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+  Modal,
+  TextField,
+} from "@mui/material";
+import { Add, Edit, Delete } from "@mui/icons-material";
 
 function Instructors() {
   const [instructors, setInstructors] = useState([]);
@@ -10,16 +21,15 @@ function Instructors() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingInstructorId, setEditingInstructorId] = useState(null);
   const [formData, setFormData] = useState({
-    name: "",
+    username: "", // Updated from name to username
     email: "",
     password: "",
     department: "",
-    role: "instructor",
   });
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/api/instructors/instructors")
+      .get("http://localhost:3001/api/instructors/all")
       .then((response) => {
         setInstructors(response.data);
       })
@@ -35,7 +45,7 @@ function Instructors() {
   const handleCloseModal = () => {
     setShowModal(false);
     setIsEditing(false);
-    setFormData({ name: "", email: "", password: "", department: "", role: "instructor" });
+    setFormData({ username: "", email: "", password: "", department: "" });
   };
 
   const handleChange = (e) => {
@@ -48,14 +58,19 @@ function Instructors() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || (!isEditing && !formData.password) || !formData.department) {
+    if (
+      !formData.username ||
+      !formData.email ||
+      (!isEditing && !formData.password) ||
+      !formData.department
+    ) {
       toast.error("All fields are required");
       return;
     }
 
     if (isEditing) {
       axios
-        .put(`http://localhost:3001/api/instructors/instructors/${editingInstructorId}`, formData)
+        .put(`http://localhost:3001/api/instructors/${editingInstructorId}`, formData)
         .then((response) => {
           toast.success("Instructor updated successfully");
           setInstructors(
@@ -86,7 +101,7 @@ function Instructors() {
     setIsEditing(true);
     setEditingInstructorId(instructor._id);
     setFormData({
-      name: instructor.name,
+      username: instructor.username, // Updated from name to username
       email: instructor.email,
       password: "",
       department: instructor.department,
@@ -97,7 +112,7 @@ function Instructors() {
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this instructor?")) {
       axios
-        .delete(`http://localhost:3001/api/instructors/instructors/${id}`)
+        .delete(`http://localhost:3001/api/instructors/${id}`)
         .then((response) => {
           toast.success("Instructor deleted successfully");
           setInstructors(instructors.filter((instructor) => instructor._id !== id));
@@ -110,141 +125,161 @@ function Instructors() {
 
   return (
     <div style={{ fontSize: "12px" }}>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5><b >Instructors List</b></h5>
-        <button className="btn btn-primary" onClick={handleOpenModal} style={{ fontSize: "12px" }}>
-          Add Instructor
-        </button>
-      </div>
+      <Card style={{ marginBottom: "20px", boxShadow: "0px 4px 10px rgba(0,0,0,0.1)" }}>
+        <CardHeader
+          title={
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Typography style={{ fontSize: "14px", fontWeight: "bold", color: "#0D3B66" }}>
+                Instructors List
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<Add />}
+                onClick={handleOpenModal}
+                style={{ fontSize: "12px" }}
+              >
+                Add Instructor
+              </Button>
+            </Box>
+          }
+          style={{ paddingBottom: 0 }}
+        />
+        <CardContent style={{ paddingTop: 0 }}>
+          {instructors.length === 0 ? (
+            <Typography style={{ fontSize: "12px", color: "#888", textAlign: "center" }}>
+              No instructors found.
+            </Typography>
+          ) : (
+            <table
+              className="table table-bordered mt-4"
+              style={{
+                fontSize: "12px",
+                textAlign: "center",
+                width: "100%",
+                borderCollapse: "collapse",
+              }}
+            >
+              <thead>
+                <tr style={{ backgroundColor: "#f1f1f1", color: "#333" }}>
+                  <th style={{ padding: "8px" }}>Username</th>
+                  <th style={{ padding: "8px" }}>Email</th>
+                  <th style={{ padding: "8px" }}>Department</th>
+                  <th style={{ padding: "8px" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {instructors.map((instructor) => (
+                  <tr key={instructor._id}>
+                    <td style={{ padding: "8px" }}>{instructor.username}</td>
+                    <td style={{ padding: "8px" }}>{instructor.email}</td>
+                    <td style={{ padding: "8px" }}>{instructor.department}</td>
+                    <td style={{ padding: "8px" }}>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEdit(instructor)}
+                        style={{ fontSize: "12px", padding: "4px" }}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        color="secondary"
+                        onClick={() => handleDelete(instructor._id)}
+                        style={{ fontSize: "12px", padding: "4px" }}
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </CardContent>
+      </Card>
 
-      {instructors.length === 0 ? (
-        <div className="alert alert-info" style={{ fontSize: "12px" }}>
-          No instructors found.
-        </div>
-      ) : (
-        <table className="table table-bordered" style={{ fontSize: "12px" }}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Department</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {instructors.map((instructor) => (
-              <tr key={instructor._id}>
-                <td>{instructor.name}</td>
-                <td>{instructor.email}</td>
-                <td>{instructor.department}</td>
-                <td>
-                  <button
-                    className="btn btn-warning me-2"
-                    style={{ width: "67px", height: "30px", padding: "0px", fontSize: "12px" }}
-                    onClick={() => handleEdit(instructor)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    style={{ width: "67px", height: "30px", padding: "0px", fontSize: "12px" }}
-                    onClick={() => handleDelete(instructor._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      {showModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ fontSize: "12px" }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" style={{ fontSize: "12px" }}>
-                  {isEditing ? "Edit Instructor" : "Add Instructor"}
-                </h5>
-                <button type="button" className="btn-close" onClick={handleCloseModal}></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label className="form-label" style={{ fontSize: "12px" }}>
-                      Name:
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      disabled={isEditing}
-                      style={{ fontSize: "12px" }}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label" style={{ fontSize: "12px" }}>
-                      Email:
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      style={{ fontSize: "12px" }}
-                    />
-                  </div>
-                  {!isEditing && (
-                    <div className="mb-3">
-                      <label className="form-label" style={{ fontSize: "12px" }}>
-                        Password:
-                      </label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        style={{ fontSize: "12px" }}
-                      />
-                    </div>
-                  )}
-                  <div className="mb-3">
-                    <label className="form-label" style={{ fontSize: "12px" }}>
-                      Department:
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="department"
-                      value={formData.department}
-                      onChange={handleChange}
-                      style={{ fontSize: "12px" }}
-                    />
-                  </div>
-                  <div className="d-flex justify-content-end">
-                    <button type="submit" className="btn btn-primary me-2" style={{ fontSize: "12px" }}>
-                      {isEditing ? "Update Instructor" : "Add Instructor"}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={handleCloseModal}
-                      style={{ fontSize: "12px" }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal open={showModal} onClose={handleCloseModal}>
+        <Box
+          style={{
+            width: "400px",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+            margin: "100px auto",
+            padding: "20px",
+            fontSize: "12px",
+          }}
+        >
+          <Typography
+            style={{ fontSize: "14px", fontWeight: "bold", marginBottom: "20px" }}
+          >
+            {isEditing ? "Edit Instructor" : "Add Instructor"}
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              fullWidth
+              margin="dense"
+              size="small"
+              disabled={isEditing}
+              style={{ fontSize: "12px" }}
+            />
+            <TextField
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              fullWidth
+              margin="dense"
+              size="small"
+              style={{ fontSize: "12px" }}
+            />
+            {!isEditing && (
+              <TextField
+                label="Password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                fullWidth
+                margin="dense"
+                size="small"
+                style={{ fontSize: "12px" }}
+              />
+            )}
+            <TextField
+              label="Department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              fullWidth
+              margin="dense"
+              size="small"
+              style={{ fontSize: "12px" }}
+            />
+            <Box display="flex" justifyContent="flex-end" mt={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={{ fontSize: "12px", marginRight: "8px" }}
+              >
+                {isEditing ? "Update Instructor" : "Add Instructor"}
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleCloseModal}
+                style={{ fontSize: "12px" }}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </form>
+        </Box>
+      </Modal>
 
       <ToastContainer />
     </div>

@@ -9,37 +9,53 @@ import {
   TableRow,
   Paper,
   Typography,
+  Box,
 } from "@mui/material";
 
-const StudentList = () => {
-  const [students, setStudents] = useState([]);
+const Enrollments = () => {
+  const [groupedEnrollments, setGroupedEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchEnrollments = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/api/student/students"
-        );
-        setStudents(response.data);
+        const response = await axios.get("http://localhost:3001/api/enrollment/all");
+
+        // Group enrollments by student
+        const grouped = response.data.reduce((acc, enrollment) => {
+          const { studentName, courseName, sectionName } = enrollment;
+          const student = acc.find((item) => item.studentName === studentName);
+          const courseSection = `${courseName} (${sectionName})`;
+
+          if (student) {
+            student.courses.push(courseSection);
+          } else {
+            acc.push({
+              studentName,
+              courses: [courseSection],
+            });
+          }
+
+          return acc;
+        }, []);
+
+        setGroupedEnrollments(grouped);
       } catch (err) {
-        console.error("Error fetching students:", err);
-        setError("Failed to fetch student data. Please try again later.");
+        console.error("Error fetching enrollments:", err);
+        setError("Failed to fetch enrollment data. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudents();
+    fetchEnrollments();
   }, []);
 
   if (loading) {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
-        <Typography style={{ fontSize: "12px", color: "#888" }}>
-          Loading...
-        </Typography>
+        <Typography style={{ fontSize: "12px", color: "#888" }}>Loading...</Typography>
       </div>
     );
   }
@@ -47,9 +63,7 @@ const StudentList = () => {
   if (error) {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
-        <Typography style={{ fontSize: "12px", color: "red" }}>
-          {error}
-        </Typography>
+        <Typography style={{ fontSize: "12px", color: "red" }}>{error}</Typography>
       </div>
     );
   }
@@ -66,7 +80,7 @@ const StudentList = () => {
           color: "#0D3B66", // University-themed dark blue
         }}
       >
-        Student List
+        Enrollment List
       </Typography>
       <TableContainer
         component={Paper}
@@ -81,7 +95,7 @@ const StudentList = () => {
             minWidth: 650,
             borderCollapse: "collapse",
           }}
-          aria-label="student table"
+          aria-label="enrollment table"
         >
           <TableHead style={{ backgroundColor: "#f1f1f1" }}>
             <TableRow>
@@ -93,7 +107,7 @@ const StudentList = () => {
                   border: "1px solid #ccc",
                 }}
               >
-                Full Name
+                Student Name
               </TableCell>
               <TableCell
                 align="left"
@@ -103,34 +117,14 @@ const StudentList = () => {
                   border: "1px solid #ccc",
                 }}
               >
-                Username
-              </TableCell>
-              <TableCell
-                align="left"
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "12px",
-                  border: "1px solid #ccc",
-                }}
-              >
-                Email
-              </TableCell>
-              <TableCell
-                align="left"
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "12px",
-                  border: "1px solid #ccc",
-                }}
-              >
-                Phone Number
+                Enrolled Courses
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {students.length > 0 ? (
-              students.map((student) => (
-                <TableRow key={student._id}>
+            {groupedEnrollments.length > 0 ? (
+              groupedEnrollments.map((student) => (
+                <TableRow key={student.studentName}>
                   <TableCell
                     align="left"
                     style={{
@@ -138,7 +132,7 @@ const StudentList = () => {
                       border: "1px solid #ccc",
                     }}
                   >
-                    {student.fullname}
+                    {student.studentName}
                   </TableCell>
                   <TableCell
                     align="left"
@@ -147,32 +141,27 @@ const StudentList = () => {
                       border: "1px solid #ccc",
                     }}
                   >
-                    {student.username}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    style={{
-                      fontSize: "12px",
-                      border: "1px solid #ccc",
-                    }}
-                  >
-                    {student.email}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    style={{
-                      fontSize: "12px",
-                      border: "1px solid #ccc",
-                    }}
-                  >
-                    {student.phone || "Not provided"}
+                    <Box
+                      component="ul"
+                      style={{
+                        padding: 0,
+                        margin: 0,
+                        listStyleType: "none",
+                      }}
+                    >
+                      {student.courses.map((course, index) => (
+                        <li key={index} style={{ marginBottom: "4px" }}>
+                          {course}
+                        </li>
+                      ))}
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={4}
+                  colSpan={2}
                   align="center"
                   style={{
                     fontSize: "12px",
@@ -180,7 +169,7 @@ const StudentList = () => {
                     color: "#888",
                   }}
                 >
-                  No students found.
+                  No enrollments found.
                 </TableCell>
               </TableRow>
             )}
@@ -191,4 +180,4 @@ const StudentList = () => {
   );
 };
 
-export default StudentList;
+export default Enrollments;

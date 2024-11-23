@@ -53,7 +53,7 @@ const EditCourse = ({ courseId, open, onClose, onSave }) => {
 
   const fetchInstructors = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/instructors/instructors");
+      const response = await axios.get("http://localhost:3001/api/instructors/all");
       setInstructors(response.data || []);
     } catch (error) {
       console.error("Error fetching instructors:", error);
