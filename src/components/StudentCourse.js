@@ -1,75 +1,58 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 import CourseTable from "./CourseTable";
-import ScheduleView from "./ScheduleView";
 import PaymentForm from "./PaymentForm";
 import EnrolledView from "./EnrolledView";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const StudentCourse = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [enrolledSections, setEnrolledSections] = useState([]);
-  const [currentView, setCurrentView] = useState("courses"); // 'courses', 'schedule', 'payment', 'enrolled'
+  const [currentView, setCurrentView] = useState("courses");
+  const [alreadyEnrolled, setAlreadyEnrolled] = useState([]);
 
   const toastOptions = {
     position: "top-right",
     autoClose: 3000,
-    hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
-    style: { fontSize: "12px", padding: "8px" },
+    style: { fontSize: "12px", padding: "8px",zIndex: 9999222222 },
   };
-
+  const showToast = (type, message) => {
+    toast.dismiss(); // Clear any existing toasts
+    console.log(`Toast triggered: ${type} - ${message}`); // Debugging line
+    if (type === "error") {
+      toast.error(message, toastOptions);
+    } else if (type === "success") {
+      toast.success(message, toastOptions);
+    }
+  };
   const handleRegisterSection = (courseId, section) => {
-    // Check if the student is already enrolled in the course
+    console.log(enrolledSections);
+    console.log(courseId);
     if (enrolledSections.some((enrolled) => enrolled.courseId === courseId)) {
-      toast.error("You can only enroll in one section per course.", toastOptions);
+      showToast("error", "You can only enroll in one section per course.");
       return;
     }
 
-    // Retrieve current user enrollment data
-    const user = JSON.parse(sessionStorage.getItem("user")) || {};
-    const currentEnrollments = (user?.enrolledCourses || []).filter(
-      (course) => course?.courseId && course?.sectionId
-    );
-
-    // Filter out undefined objects in `enrolledSections`
-    const validEnrolledSections = enrolledSections.filter(
-      (section) => section?.courseId && section?.sectionId
-    );
-
-    console.log("Current Enrollments:", currentEnrollments);
-    console.log("Valid Enrolled Sections:", validEnrolledSections);
-
-    // Ensure total enrollments do not exceed 3
-    if (currentEnrollments.length + validEnrolledSections.length > 3) {
-      toast.error(
-        "You can only enroll in a maximum of three courses.",
-        toastOptions
-      );
-      return;
-    }
-
-    // Validate section before adding
     if (!courseId || !section?._id) {
       console.error("Invalid section data:", { courseId, section });
       toast.error("Invalid section data. Please try again.", toastOptions);
       return;
     }
 
-    // Add the selected section
     setEnrolledSections((prev) => [
       ...prev,
       {
         courseId,
         sectionId: section._id,
         sectionName: section.sectionName,
-        instructor: section.instructor?.username || "Unknown",
-        price: 1000, // Fixed price per course
+        instructor: section.instructor?.firstName || "Unknown",
+        price: 1000,
       },
     ]);
 
@@ -100,16 +83,14 @@ const StudentCourse = () => {
         );
         setCourses(coursesResponse.data);
 
-        // Fetch current enrollments for the user
         const user = JSON.parse(sessionStorage.getItem("user"));
         if (user?._id) {
           const enrollmentsResponse = await axios.get(
             `http://localhost:3001/api/student/enrolledClasses/${user._id}`
           );
+          setAlreadyEnrolled(enrollmentsResponse.data);
           const currentEnrollments = enrollmentsResponse.data
-            .filter(
-              (enrollment) => enrollment.courseId && enrollment.sectionId
-            ) // Filter invalid entries
+            .filter((enrollment) => enrollment.courseId && enrollment.sectionId)
             .map((enrollment) => ({
               courseId: enrollment.courseId,
               sectionId: enrollment.sectionId,
@@ -123,31 +104,32 @@ const StudentCourse = () => {
         setLoading(false);
       }
     };
-
+    
     fetchData();
   }, []);
+
+  const goTopayments = () => {
+    if (enrolledSections.length === 0) {
+      toast.error("No courses selected. Please select at least one course to proceed.", toastOptions);
+    } else {
+      setCurrentView("payment");
+    }
+  };
+  
 
   if (loading) return <div>Loading courses...</div>;
   if (error) return <div className="text-danger">{error}</div>;
 
   return (
     <div>
-      <ToastContainer />
       {currentView === "courses" && (
         <CourseTable
           courses={courses}
           enrolledSections={enrolledSections}
+          alreadyEnrolled={alreadyEnrolled}
           onSelect={handleRegisterSection}
           onDrop={handleDropSection}
-          onProceedToSchedule={() => setCurrentView("schedule")}
-        />
-      )}
-      {currentView === "schedule" && (
-        <ScheduleView
-          enrolledSections={enrolledSections}
-          courses={courses}
-          onBack={() => setCurrentView("courses")}
-          onProceedToPayment={() => setCurrentView("payment")}
+          onProceedToSchedule={goTopayments}
         />
       )}
       {currentView === "payment" && (
@@ -155,11 +137,11 @@ const StudentCourse = () => {
           enrolledSections={enrolledSections}
           courses={courses}
           onSuccess={handlePaymentSuccess}
-          onBack={() => setCurrentView("schedule")}
+          onBack={() => setCurrentView("courses")}
         />
       )}
       {currentView === "enrolled" && <EnrolledView />}
-    </div>
+      </div>
   );
 };
 

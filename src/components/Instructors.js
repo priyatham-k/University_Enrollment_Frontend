@@ -12,6 +12,7 @@ import {
   IconButton,
   Modal,
   TextField,
+  Grid,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
 
@@ -21,8 +22,10 @@ function Instructors() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingInstructorId, setEditingInstructorId] = useState(null);
   const [formData, setFormData] = useState({
-    username: "", // Updated from name to username
+    firstName: "",
+    lastName: "",
     email: "",
+    phone: "",
     password: "",
     department: "",
   });
@@ -45,7 +48,14 @@ function Instructors() {
   const handleCloseModal = () => {
     setShowModal(false);
     setIsEditing(false);
-    setFormData({ username: "", email: "", password: "", department: "" });
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      password: "",
+      department: "",
+    });
   };
 
   const handleChange = (e) => {
@@ -59,8 +69,10 @@ function Instructors() {
     e.preventDefault();
 
     if (
-      !formData.username ||
+      !formData.firstName ||
+      !formData.lastName ||
       !formData.email ||
+      !formData.phone ||
       (!isEditing && !formData.password) ||
       !formData.department
     ) {
@@ -101,8 +113,10 @@ function Instructors() {
     setIsEditing(true);
     setEditingInstructorId(instructor._id);
     setFormData({
-      username: instructor.username, // Updated from name to username
+      firstName: instructor.firstName,
+      lastName: instructor.lastName,
       email: instructor.email,
+      phone: instructor.phone,
       password: "",
       department: instructor.department,
     });
@@ -162,8 +176,10 @@ function Instructors() {
             >
               <thead>
                 <tr style={{ backgroundColor: "#f1f1f1", color: "#333" }}>
-                  <th style={{ padding: "8px" }}>Username</th>
+                  <th style={{ padding: "8px" }}>First Name</th>
+                  <th style={{ padding: "8px" }}>Last Name</th>
                   <th style={{ padding: "8px" }}>Email</th>
+                  <th style={{ padding: "8px" }}>Phone</th>
                   <th style={{ padding: "8px" }}>Department</th>
                   <th style={{ padding: "8px" }}>Actions</th>
                 </tr>
@@ -171,8 +187,10 @@ function Instructors() {
               <tbody>
                 {instructors.map((instructor) => (
                   <tr key={instructor._id}>
-                    <td style={{ padding: "8px" }}>{instructor.username}</td>
+                    <td style={{ padding: "8px" }}>{instructor.firstName}</td>
+                    <td style={{ padding: "8px" }}>{instructor.lastName}</td>
                     <td style={{ padding: "8px" }}>{instructor.email}</td>
+                    <td style={{ padding: "8px" }}>{instructor.phone}</td>
                     <td style={{ padding: "8px" }}>{instructor.department}</td>
                     <td style={{ padding: "8px" }}>
                       <IconButton
@@ -201,7 +219,7 @@ function Instructors() {
       <Modal open={showModal} onClose={handleCloseModal}>
         <Box
           style={{
-            width: "400px",
+            width: "500px",
             backgroundColor: "#fff",
             borderRadius: "8px",
             boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
@@ -216,50 +234,83 @@ function Instructors() {
             {isEditing ? "Edit Instructor" : "Add Instructor"}
           </Typography>
           <form onSubmit={handleSubmit}>
-            <TextField
-              label="Username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              fullWidth
-              margin="dense"
-              size="small"
-              disabled={isEditing}
-              style={{ fontSize: "12px" }}
-            />
-            <TextField
-              label="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              fullWidth
-              margin="dense"
-              size="small"
-              style={{ fontSize: "12px" }}
-            />
-            {!isEditing && (
-              <TextField
-                label="Password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                fullWidth
-                margin="dense"
-                size="small"
-                style={{ fontSize: "12px" }}
-              />
-            )}
-            <TextField
-              label="Department"
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-              fullWidth
-              margin="dense"
-              size="small"
-              style={{ fontSize: "12px" }}
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  label="First Name"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="dense"
+                  size="small"
+                  style={{ fontSize: "12px" }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Last Name"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="dense"
+                  size="small"
+                  style={{ fontSize: "12px" }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="dense"
+                  size="small"
+                  style={{ fontSize: "12px" }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="dense"
+                  size="small"
+                  style={{ fontSize: "12px" }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Department"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="dense"
+                  size="small"
+                  style={{ fontSize: "12px" }}
+                />
+              </Grid>
+              {!isEditing && (
+                <Grid item xs={12}>
+                  <TextField
+                    label="Password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="dense"
+                    size="small"
+                    style={{ fontSize: "12px" }}
+                  />
+                </Grid>
+              )}
+            </Grid>
             <Box display="flex" justifyContent="flex-end" mt={2}>
               <Button
                 variant="contained"
@@ -281,7 +332,7 @@ function Instructors() {
         </Box>
       </Modal>
 
-      <ToastContainer />
+      
     </div>
   );
 }

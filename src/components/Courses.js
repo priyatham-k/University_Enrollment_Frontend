@@ -30,7 +30,6 @@ const Courses = () => {
   const [courseData, setCourseData] = useState({
     courseName: "",
     courseCode: "",
-    courseNumber: "",
     description: "",
     term: "",
   });
@@ -90,7 +89,6 @@ const Courses = () => {
     setCourseData({
       courseName: "",
       courseCode: "",
-      courseNumber: "",
       description: "",
       term: "",
     });
@@ -104,7 +102,6 @@ const Courses = () => {
     setCourseData({
       courseName: course.courseName,
       courseCode: course.courseCode,
-      courseNumber: course.courseNumber,
       description: course.description,
       term: course.term,
     });
@@ -118,13 +115,18 @@ const Courses = () => {
   const saveCourse = async () => {
     try {
       if (editingCourseId) {
-        await axios.put(`http://localhost:3001/api/courses/${editingCourseId}`, {
-          ...courseData,
-          sections: sections.map((section) => ({
-            sectionName: section.sectionName,
-            instructor: section.instructor ? section.instructor._id || section.instructor : null,
-          })),
-        });
+        await axios.put(
+          `http://localhost:3001/api/courses/${editingCourseId}`,
+          {
+            ...courseData,
+            sections: sections.map((section) => ({
+              sectionName: section.sectionName,
+              instructor: section.instructor
+                ? section.instructor._id || section.instructor
+                : null,
+            })),
+          }
+        );
         toast.success("Course updated successfully!");
       } else {
         const response = await axios.post(
@@ -133,7 +135,9 @@ const Courses = () => {
             ...courseData,
             sections: sections.map((section) => ({
               sectionName: section.sectionName,
-              instructor: section.instructor ? section.instructor._id || section.instructor : null,
+              instructor: section.instructor
+                ? section.instructor._id || section.instructor
+                : null,
             })),
           }
         );
@@ -168,7 +172,6 @@ const Courses = () => {
     setCourseData({
       courseName: "",
       courseCode: "",
-      courseNumber: "",
       description: "",
       term: "",
     });
@@ -178,13 +181,24 @@ const Courses = () => {
   return (
     <div style={{ fontSize: "12px" }}>
       <Card
-        style={{ marginBottom: "20px", boxShadow: "0px 4px 10px rgba(0,0,0,0.1)" }}
+        style={{
+          marginBottom: "20px",
+          boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+        }}
       >
         <CardHeader
           title={
-            <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <Typography
-                style={{ fontSize: "14px", fontWeight: "bold", color: "#0D3B66" }}
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  color: "#0D3B66",
+                }}
               >
                 Courses List
               </Typography>
@@ -202,62 +216,91 @@ const Courses = () => {
           style={{ paddingBottom: 0 }}
         />
         <CardContent style={{ paddingTop: 0 }}>
-          <table
-            className="table table-bordered mt-4"
-            style={{
-              fontSize: "12px",
-              textAlign: "center",
-              width: "100%",
-              borderCollapse: "collapse",
-            }}
-          >
-            <thead>
-              <tr style={{ backgroundColor: "#f1f1f1", color: "#333" }}>
-                <th style={{ padding: "8px" }}>Course Name</th>
-                <th style={{ padding: "8px" }}>Course Code</th>
-                <th style={{ padding: "8px" }}>Course Number</th>
-                <th style={{ padding: "8px" }}>Term</th>
-                <th style={{ padding: "8px" }}>Description</th>
-                <th style={{ padding: "8px" }}>Section(Instructor)</th>
-                <th style={{ padding: "8px" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.map((course) => (
-                <tr key={course._id}>
-                  <td style={{ padding: "8px" }}>{course.courseName}</td>
-                  <td style={{ padding: "8px" }}>{course.courseCode}</td>
-                  <td style={{ padding: "8px" }}>{course.courseNumber}</td>
-                  <td style={{ padding: "8px" }}>{course.term}</td>
-                  <td style={{ padding: "8px" }}>{course.description}</td>
-                  <td style={{ padding: "8px" }}>
-                    {(course.sections || []).map((section, index) => (
-                      <div key={index} style={{ fontSize: "12px" }}>
-                        <strong>{section.sectionName}</strong> -{" "}
-                        {(section.instructor?.username) || ("No instructor assigned")}
-                      </div>
-                    ))}
-                  </td>
-                  <td style={{ padding: "8px" }}>
-                    <IconButton
-                      color="primary"
-                      onClick={() => openEditCourseModal(course)}
-                      style={{ fontSize: "12px" }}
-                    >
-                      <Edit fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      color="secondary"
-                      onClick={() => deleteCourse(course._id)}
-                      style={{ fontSize: "12px" }}
-                    >
-                      <Delete fontSize="small" />
-                    </IconButton>
-                  </td>
+          {courses.length === 0 ? (
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "14px",
+                color: "#888",
+                padding: "16px",
+              }}
+            >
+              No courses available.
+            </div>
+          ) : (
+            <table
+              className="table table-bordered mt-4"
+              style={{
+                fontSize: "12px",
+                textAlign: "left",
+                width: "100%",
+                borderCollapse: "collapse",
+              }}
+            >
+              <thead>
+                <tr style={{ backgroundColor: "#f1f1f1", color: "#333" }}>
+                  <th style={{ padding: "8px" }}>Course Name</th>
+                  <th style={{ padding: "8px" }}>Course Code</th>
+                  <th style={{ padding: "8px" }}>Term</th>
+                  <th style={{ padding: "8px" }}>Description</th>
+                  <th style={{ padding: "8px" }}>
+                    Sections (Day & Time) - Instructor
+                  </th>
+                  <th style={{ padding: "8px" }}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {courses.map((course) => (
+                  <tr key={course._id}>
+                    <td style={{ padding: "8px" }}>{course.courseName}</td>
+                    <td style={{ padding: "8px" }}>{course.courseCode}</td>
+                    <td style={{ padding: "8px" }}>{course.term}</td>
+                    <td style={{ padding: "8px" }}>{course.description}</td>
+                    <td style={{ padding: "8px" }}>
+                      {course.sections && course.sections.length > 0 ? (
+                        course.sections.map((section, index) => (
+                          <div key={index} style={{ fontSize: "12px" }}>
+                            <strong>
+                              {section.sectionName || "Unnamed Section"}
+                            </strong>{" "}
+                            -{" "}
+                            {section.instructor
+                              ? `${
+                                  section.instructor.firstName ||
+                                  "No first name"
+                                } ${
+                                  section.instructor.lastName || "No last name"
+                                }`
+                              : "No instructor assigned"}
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ fontSize: "12px", color: "#999" }}>
+                          No sections available for this course.
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ padding: "8px" }}>
+                      <IconButton
+                        color="primary"
+                        onClick={() => openEditCourseModal(course)}
+                        style={{ fontSize: "12px" }}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        color="secondary"
+                        onClick={() => deleteCourse(course._id)}
+                        style={{ fontSize: "12px" }}
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </CardContent>
       </Card>
 
@@ -292,27 +335,26 @@ const Courses = () => {
                 size="small"
                 style={{ fontSize: "12px" }}
               />
-              <TextField
-                label="Course Number"
-                name="courseNumber"
-                value={courseData.courseNumber}
-                onChange={handleInputChange}
-                fullWidth
-                margin="dense"
-                size="small"
-                type="number"
-                style={{ fontSize: "12px" }}
-              />
-              <TextField
-                label="Term"
-                name="term"
-                value={courseData.term}
-                onChange={handleInputChange}
-                fullWidth
-                margin="dense"
-                size="small"
-                style={{ fontSize: "12px" }}
-              />
+
+              <FormControl fullWidth margin="dense" size="small">
+                <InputLabel style={{ fontSize: "12px", padding: "2px" }}>
+                  Term
+                </InputLabel>
+                <Select
+                  name="term"
+                  value={courseData.term}
+                  onChange={handleInputChange}
+                  style={{ fontSize: "12px", padding: "2px" }}
+                >
+                  <MenuItem value="Spring 2025" style={{ fontSize: "12px" }}>
+                    Spring 2025
+                  </MenuItem>
+                  <MenuItem value="Summer 2025" style={{ fontSize: "12px" }}>
+                    Summer 2025
+                  </MenuItem>
+                </Select>
+              </FormControl>
+
               <TextField
                 label="Description"
                 name="description"
@@ -330,9 +372,12 @@ const Courses = () => {
                 Sections
               </Typography>
               {sections.map((section, index) => (
-                <Box key={index} style={{ marginBottom: "8px", fontSize: "12px" }}>
+                <Box
+                  key={index}
+                  style={{ marginBottom: "8px", fontSize: "12px" }}
+                >
                   <TextField
-                    label={`Section ${index + 1} Name`}
+                    label={`Course Number (Day & Time)`}
                     value={section.sectionName}
                     onChange={(e) =>
                       handleSectionChange(index, "sectionName", e.target.value)
@@ -343,9 +388,13 @@ const Courses = () => {
                     style={{ fontSize: "12px" }}
                   />
                   <FormControl fullWidth margin="dense" size="small">
-                    <InputLabel style={{ fontSize: "12px" }}>Instructor</InputLabel>
+                    <InputLabel style={{ fontSize: "12px" }}>
+                      Instructor
+                    </InputLabel>
                     <Select
-                      value={section.instructor?._id || section.instructor || ""}
+                      value={
+                        section.instructor?._id || section.instructor || ""
+                      }
                       onChange={(e) =>
                         handleSectionChange(index, "instructor", e.target.value)
                       }
@@ -357,7 +406,7 @@ const Courses = () => {
                           value={instructor._id}
                           style={{ fontSize: "12px" }}
                         >
-                          {instructor.username}
+                          {instructor.firstName} {instructor.lastName}
                         </MenuItem>
                       ))}
                     </Select>
@@ -391,10 +440,10 @@ const Courses = () => {
               <Typography style={{ fontSize: "12px" }}>
                 Code: {courseData.courseCode}
               </Typography>
+
               <Typography style={{ fontSize: "12px" }}>
-                Number: {courseData.courseNumber}
+                Term: {courseData.term}
               </Typography>
-              <Typography style={{ fontSize: "12px" }}>Term: {courseData.term}</Typography>
               <Typography style={{ fontSize: "12px" }}>
                 Description: {courseData.description}
               </Typography>
@@ -403,15 +452,19 @@ const Courses = () => {
                 Sections
               </Typography>
               {sections.map((section, index) => (
-                <Box key={index} style={{ marginBottom: "8px", fontSize: "12px" }}>
+                <Box
+                  key={index}
+                  style={{ marginBottom: "8px", fontSize: "12px" }}
+                >
                   <Typography style={{ fontSize: "12px" }}>
-                    Section {index + 1}: {section.sectionName}
+                    Course Number: {section.sectionName}
                   </Typography>
                   <Typography style={{ fontSize: "12px" }}>
                     Instructor:{" "}
-                    {section.instructor?.username ||
-                      instructors.find((inst) => inst._id === section.instructor)
-                        ?.username ||
+                    {section.instructor?.firstName ||
+                      instructors.find(
+                        (inst) => inst._id === section.instructor
+                      )?.firstName ||
                       "Not assigned"}
                   </Typography>
                 </Box>
@@ -449,7 +502,6 @@ const Courses = () => {
           )}
         </DialogActions>
       </Dialog>
-      <ToastContainer />
     </div>
   );
 };

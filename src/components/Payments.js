@@ -217,7 +217,7 @@ const Payments = () => {
           color: "#0D3B66",
         }}
       >
-        Total Money Collected: ${totalAmount.toFixed(2)}
+        Total Fees Collected: ${totalAmount.toFixed(2)}
       </Typography>
     </div>
   );

@@ -111,7 +111,7 @@ const PaymentForm = ({ enrolledSections, courses, onSuccess, onBack }) => {
 
   return (
     <>
-      <ToastContainer />
+      
       <div className="card shadow mb-4" style={{ fontSize: "12px" }}>
         <div className="card-header py-3 text-left">
           <h5
@@ -123,7 +123,7 @@ const PaymentForm = ({ enrolledSections, courses, onSuccess, onBack }) => {
         </div>
         <div className="card-body">
           <div className="mb-3">
-            <h6>Selected Courses:</h6>
+            <h6><b>Selected Courses:</b></h6>
             <ul style={{ paddingLeft: "16px" }}>{renderSelectedCourses()}</ul>
             <p style={{ fontWeight: "bold" }}>Total: ${totalAmount.toFixed(2)}</p>
           </div>

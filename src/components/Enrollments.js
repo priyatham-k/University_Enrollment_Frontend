@@ -26,7 +26,7 @@ const Enrollments = () => {
         const grouped = response.data.reduce((acc, enrollment) => {
           const { studentName, courseName, sectionName } = enrollment;
           const student = acc.find((item) => item.studentName === studentName);
-          const courseSection = `${courseName} (${sectionName})`;
+          const courseSection = `${courseName} ${sectionName}`;
 
           if (student) {
             student.courses.push(courseSection);

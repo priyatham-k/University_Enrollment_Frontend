@@ -1,10 +1,12 @@
 import React from "react";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const CourseTable = ({
   courses,
   enrolledSections,
   onSelect,
   onDrop,
+  alreadyEnrolled,
   onProceedToSchedule,
 }) => {
   const buttonStyle = {
@@ -30,81 +32,131 @@ const CourseTable = ({
   };
 
   return (
-    <>
+    <div>
       <div className="card shadow mb-4" style={{ fontSize: "12px" }}>
         <div className="card-header py-3 text-left">
-          <h5 className="m-0 font-weight-bold text-primary" style={{ fontSize: "12px" }}>
+          <h5
+            className="m-0 font-weight-bold text-primary"
+            style={{ fontSize: "12px" }}
+          >
             All Courses
           </h5>
         </div>
         <div className="card-body">
           <div className="table-responsive">
-            <table className="table table-bordered" style={{ fontSize: "12px" }}>
+            <table
+              className="table table-bordered"
+              style={{ fontSize: "12px" }}
+            >
               <thead className="thead-light">
                 <tr>
                   <th>Course Name</th>
                   <th>Course Code</th>
                   <th>Description</th>
                   <th>Term</th>
-                  <th>Sections</th>
+                  <th>Sections (Day & Time) - Instructor</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {courses.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="text-center">
+                    <td colSpan="6" className="text-center">
                       No courses available.
                     </td>
                   </tr>
                 ) : (
-                  courses.map((course) => (
-                    <tr key={course._id}>
-                      <td>{course.courseName}</td>
-                      <td>{course.courseCode}</td>
-                      <td>{course.description}</td>
-                      <td>{course.term}</td>
-                      <td>
-                        {course.sections.map((section) => {
-                          const isCourseSelected = enrolledSections.some(
-                            (enrolled) =>
-                              enrolled.courseId === course._id &&
-                              enrolled.sectionId === section._id
-                          );
+                  courses.map((course) => {
+                    const isCourseAlreadyEnrolled = alreadyEnrolled.some(
+                      (enrolled) => enrolled.cid === course._id
+                    );
 
-                          return (
+                    return (
+                      <tr key={course._id}>
+                        <td>{course.courseName}</td>
+                        <td>{course.courseCode}</td>
+                        <td>{course.description}</td>
+                        <td>{course.term}</td>
+                        <td>
+                          {course.sections && course.sections.length > 0 ? (
+                            course.sections.map((section) => (
+                              <div
+                                key={section._id || Math.random()} // Use Math.random() as a fallback for key if _id is unavailable
+                                style={{ marginBottom: "8px" }}
+                              >
+                                <strong>
+                                  {section.sectionName || "Unnamed Section"}
+                                </strong>{" "}
+                                -{" "}
+                                {section.instructor?.firstName ||
+                                  "No instructor assigned"}
+                              </div>
+                            ))
+                          ) : (
                             <div
-                              key={section._id}
                               style={{
-                                marginBottom: "8px",
-                                display: "flex",
-                                alignItems: "center",
+                                fontSize: "12px",
+                                color: "#999",
+                                marginTop: "8px",
                               }}
                             >
-                              <div style={{ flex: 1, fontSize: "12px" }}>
-                                <strong>{section.sectionName}</strong> -{" "}
-                                {section.instructor?.username || "No instructor assigned"}
-                              </div>
-                              {isCourseSelected ? (
-                                <button
-                                  style={unselectButtonStyle}
-                                  onClick={() => onDrop(course._id)}
-                                >
-                                  Unselect
-                                </button>
-                              ) : (
-                                <button
-                                  style={selectButtonStyle}
-                                  onClick={() => onSelect(course._id, section)}
-                                >
-                                  Select
-                                </button>
-                              )}
+                              No sections available.
                             </div>
-                          );
-                        })}
-                      </td>
-                    </tr>
-                  ))
+                          )}
+                        </td>
+                        <td>
+                          {isCourseAlreadyEnrolled ? (
+                            <span
+                              style={{
+                                fontSize: "12px",
+                                color: "green",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Already Enrolled
+                            </span>
+                          ) : (
+                            course.sections.map((section) => {
+                              const isSectionSelected = enrolledSections.some(
+                                (enrolled) =>
+                                  enrolled.courseId === course._id &&
+                                  enrolled.sectionId === section._id
+                              );
+
+                              return (
+                                <div
+                                  key={section._id}
+                                  style={{
+                                    marginBottom: "8px",
+                                  }}
+                                >
+                                  {isSectionSelected ? (
+                                    <button
+                                      style={unselectButtonStyle}
+                                      onClick={() =>
+                                        onDrop(course._id, section._id)
+                                      }
+                                    >
+                                      Unselect
+                                    </button>
+                                  ) : (
+                                    <button
+                                      style={selectButtonStyle}
+                                      onClick={() =>
+                                        onSelect(course._id, section)
+                                      }
+                                    >
+                                      Select
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -124,7 +176,7 @@ const CourseTable = ({
           Get This Schedule
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

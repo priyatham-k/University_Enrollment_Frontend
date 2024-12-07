@@ -22,7 +22,7 @@ const ScheduleView = ({ enrolledSections, courses, onBack, onProceedToPayment })
               <thead className="thead-light">
                 <tr>
                   <th>Course Name</th>
-                  <th>Section</th>
+                  <th>Sections (Day & Time)</th>
                   <th>Instructor</th>
                 </tr>
               </thead>

@@ -17,12 +17,14 @@ function AdminDashboard() {
   const [successMessage, setSuccessMessage] = useState("");
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
-
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user) {
-      setUsername(user.username.split("@")[0]); // Show only the username before "@"
-      setRole(user.role);
+      setFirstName(user.firstName); // Set the first name
+      setLastName(user.lastName);   // Set the last name
+      setRole("Admin");
     }
   }, []);
 
@@ -214,7 +216,7 @@ function AdminDashboard() {
                             color: "#333",
                           }}
                         >
-                          {username}
+                          {firstName} {lastName}<br/> Role: {role}
                         </span>
                         
                       </div>

@@ -4,22 +4,23 @@ import { useNavigate } from "react-router-dom";
 import "../App.css"; // Adjust the path as needed
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("student"); // Default role
   const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState("");
   const navigate = useNavigate();
 
   const validateInputs = () => {
-    if (!username || !password) {
-      setValidationError("Username and Password are required.");
+    if (!email || !password) {
+      setValidationError("Email and Password are required.");
       return false;
     }
     setValidationError("");
     return true;
   };
 
-  const handleLogin = async (role) => {
+  const handleLogin = async () => {
     // Clear session and error messages
     sessionStorage.clear();
     setError(null);
@@ -38,7 +39,7 @@ function Login() {
           : "http://localhost:3001/api/student/login";
 
       response = await axios.post(endpoint, {
-        username,
+        email,
         password,
       });
 
@@ -64,7 +65,7 @@ function Login() {
   return (
     <div
       style={{
-        background: "#0D3B66", // Dark official blue background
+        background: "#0D3B66",
         height: "100vh",
         fontFamily: "Arial, sans-serif",
         fontSize: "12px",
@@ -94,21 +95,48 @@ function Login() {
         {/* Right side: Login Form */}
         <div style={{ width: "50%", padding: "20px" }}>
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
-            <h1 style={{ color: "#0D3B66", fontSize: "16px", marginBottom: "10px" }}>
+            <h1
+              style={{
+                color: "#0D3B66",
+                fontSize: "16px",
+                marginBottom: "10px",
+              }}
+            >
               Welcome to the University Portal
             </h1>
-            <p style={{ color: "#333", margin: 0 }}>Please log in to manage your account</p>
+            <p style={{ color: "#333", margin: 0 }}>
+              Please log in to manage your account
+            </p>
           </div>
 
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleLogin("student");
+              handleLogin();
             }}
           >
+            {" "}
+            <div style={{ marginBottom: "15px" }}>
+              <select
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  fontSize: "12px",
+                  backgroundColor: "#fff",
+                }}
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="student">I'm a Student</option>
+                <option value="instructor">I'm an Instructor</option>
+                <option value="admin">I'm an Admin</option>
+              </select>
+            </div>
             <div style={{ marginBottom: "15px" }}>
               <input
-                type="text"
+                type="email"
                 style={{
                   width: "100%",
                   padding: "10px",
@@ -116,9 +144,9 @@ function Login() {
                   border: "1px solid #ccc",
                   fontSize: "12px",
                 }}
-                placeholder="Enter Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div style={{ marginBottom: "15px" }}>
@@ -136,24 +164,26 @@ function Login() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-
             {validationError && (
-              <p style={{ color: "red", fontSize: "12px", marginBottom: "15px" }}>
+              <p
+                style={{ color: "red", fontSize: "12px", marginBottom: "15px" }}
+              >
                 {validationError}
               </p>
             )}
             {error && (
-              <p style={{ color: "red", fontSize: "12px", marginBottom: "15px" }}>
+              <p
+                style={{ color: "red", fontSize: "12px", marginBottom: "15px" }}
+              >
                 {error}
               </p>
             )}
-
             <button
               type="submit"
               style={{
                 width: "100%",
                 padding: "10px",
-                background: "#007EA7", // University-themed blue
+                background: "#007EA7",
                 color: "#fff",
                 border: "none",
                 borderRadius: "5px",
@@ -161,45 +191,9 @@ function Login() {
                 cursor: "pointer",
               }}
             >
-              Student Login
+              Login
             </button>
           </form>
-
-          <div style={{ textAlign: "center", margin: "20px 0" }}>
-            <p style={{ margin: 0, color: "#666", fontSize: "12px" }}>OR</p>
-          </div>
-
-          <button
-            style={{
-              width: "100%",
-              padding: "10px",
-              background: "#D72638", // Official red for instructors
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              fontSize: "12px",
-              cursor: "pointer",
-              marginBottom: "10px",
-            }}
-            onClick={() => handleLogin("instructor")}
-          >
-            Instructor Login
-          </button>
-          <button
-            style={{
-              width: "100%",
-              padding: "10px",
-              background: "#003459", // Dark blue for admins
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              fontSize: "12px",
-              cursor: "pointer",
-            }}
-            onClick={() => handleLogin("admin")}
-          >
-            Admin Login
-          </button>
         </div>
       </div>
     </div>
