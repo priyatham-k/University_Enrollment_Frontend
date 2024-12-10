@@ -147,8 +147,8 @@ const Courses = () => {
       fetchCourses();
       setShowSavedView(true);
     } catch (error) {
-      toast.error("Failed to save course.");
-      console.error("Error saving course:", error);
+      toast.error(error.response?.data?.message);
+      console.error("Error saving course:", error.response?.data?.message);
     }
   };
 
@@ -229,77 +229,90 @@ const Courses = () => {
             </div>
           ) : (
             <table
-              className="table table-bordered mt-4"
-              style={{
-                fontSize: "12px",
-                textAlign: "left",
-                width: "100%",
-                borderCollapse: "collapse",
-              }}
-            >
-              <thead>
-                <tr style={{ backgroundColor: "#f1f1f1", color: "#333" }}>
-                  <th style={{ padding: "8px" }}>Course Name</th>
-                  <th style={{ padding: "8px" }}>Course Code</th>
-                  <th style={{ padding: "8px" }}>Term</th>
-                  <th style={{ padding: "8px" }}>Description</th>
-                  <th style={{ padding: "8px" }}>
-                    Sections (Day & Time) - Instructor
-                  </th>
-                  <th style={{ padding: "8px" }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courses.map((course) => (
-                  <tr key={course._id}>
-                    <td style={{ padding: "8px" }}>{course.courseName}</td>
-                    <td style={{ padding: "8px" }}>{course.courseCode}</td>
-                    <td style={{ padding: "8px" }}>{course.term}</td>
-                    <td style={{ padding: "8px" }}>{course.description}</td>
-                    <td style={{ padding: "8px" }}>
-                      {course.sections && course.sections.length > 0 ? (
-                        course.sections.map((section, index) => (
-                          <div key={index} style={{ fontSize: "12px" }}>
-                            <strong>
-                              {section.sectionName || "Unnamed Section"}
-                            </strong>{" "}
-                            -{" "}
-                            {section.instructor
-                              ? `${
-                                  section.instructor.firstName ||
-                                  "No first name"
-                                } ${
-                                  section.instructor.lastName || "No last name"
-                                }`
-                              : "No instructor assigned"}
-                          </div>
-                        ))
-                      ) : (
-                        <div style={{ fontSize: "12px", color: "#999" }}>
-                          No sections available for this course.
-                        </div>
-                      )}
-                    </td>
-                    <td style={{ padding: "8px" }}>
-                      <IconButton
-                        color="primary"
-                        onClick={() => openEditCourseModal(course)}
-                        style={{ fontSize: "12px" }}
-                      >
-                        <Edit fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        color="secondary"
-                        onClick={() => deleteCourse(course._id)}
-                        style={{ fontSize: "12px" }}
-                      >
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  className="table table-bordered mt-4"
+  style={{
+    fontSize: "12px",
+    textAlign: "left",
+    width: "100%",
+    borderCollapse: "collapse",
+  }}
+>
+  <thead>
+    <tr style={{ backgroundColor: "#f1f1f1", color: "#333" }}>
+      <th style={{ padding: "8px" }}>Course Name</th>
+      <th style={{ padding: "8px" }}>Course Code</th>
+      <th style={{ padding: "8px" }}>Term</th>
+      <th style={{ padding: "8px" }}>Description</th>
+      <th style={{ padding: "8px" }}>Sections (Day - Time) - Instructor</th>
+      <th style={{ padding: "8px" }}>Available Seats</th>
+      <th style={{ padding: "8px" }}>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {courses.map((course) => (
+      <tr key={course._id}>
+        <td style={{ padding: "8px" }}>{course.courseName}</td>
+        <td style={{ padding: "8px" }}>{course.courseCode}</td>
+        <td style={{ padding: "8px" }}>{course.term}</td>
+        <td style={{ padding: "8px" }}>{course.description}</td>
+        <td style={{ padding: "8px" }}>
+          {course.sections && course.sections.length > 0 ? (
+            course.sections.map((section, index) => (
+              <div key={index} style={{ fontSize: "12px" }}>
+                <strong>
+                  {section.sectionName || "Unnamed Section"}
+                </strong>{" "}
+                -{" "}
+                {section.instructor
+                  ? `${
+                      section.instructor.firstName || "No first name"
+                    } ${
+                      section.instructor.lastName || "No last name"
+                    }`
+                  : "No instructor assigned"}
+              </div>
+            ))
+          ) : (
+            <div style={{ fontSize: "12px", color: "#999" }}>
+              No sections available for this course.
+            </div>
+          )}
+        </td>
+        <td style={{ padding: "8px" }}>
+          {course.sections && course.sections.length > 0 ? (
+            course.sections.map((section, index) => (
+              <div
+                key={index}
+                style={{ fontSize: "12px", marginBottom: "4px" }}
+              >
+                {section.numberOfSeats ?? "N/A"}
+              </div>
+            ))
+          ) : (
+            <div style={{ fontSize: "12px", color: "#999" }}>N/A</div>
+          )}
+        </td>
+        <td style={{ padding: "8px" }}>
+          <IconButton
+            color="primary"
+            onClick={() => openEditCourseModal(course)}
+            style={{ fontSize: "12px" }}
+          >
+            <Edit fontSize="small" />
+          </IconButton>
+          <IconButton
+            color="secondary"
+            onClick={() => deleteCourse(course._id)}
+            style={{ fontSize: "12px" }}
+          >
+            <Delete fontSize="small" />
+          </IconButton>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
           )}
         </CardContent>
       </Card>
@@ -349,9 +362,9 @@ const Courses = () => {
                   <MenuItem value="Spring 2025" style={{ fontSize: "12px" }}>
                     Spring 2025
                   </MenuItem>
-                  <MenuItem value="Summer 2025" style={{ fontSize: "12px" }}>
+                  {/* <MenuItem value="Summer 2025" style={{ fontSize: "12px" }}>
                     Summer 2025
-                  </MenuItem>
+                  </MenuItem> */}
                 </Select>
               </FormControl>
 
@@ -377,7 +390,7 @@ const Courses = () => {
                   style={{ marginBottom: "8px", fontSize: "12px" }}
                 >
                   <TextField
-                    label={`Course Number (Day & Time)`}
+                    label={`Course Number (Day - Time)`}
                     value={section.sectionName}
                     onChange={(e) =>
                       handleSectionChange(index, "sectionName", e.target.value)

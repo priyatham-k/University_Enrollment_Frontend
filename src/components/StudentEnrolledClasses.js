@@ -113,8 +113,7 @@ const StudentEnrolledClasses = () => {
           `http://localhost:3001/api/student/dropCourse/${userId}`,
           { courseId: selectedPaymentId }
         );
-
-        if (response.status === 200 || response.message == "Course dropped successfully") {
+        if (response.status === 200 || response.message == "Course dropped successfully and seat updated") {
           toast.success("Course dropped successfully!");
           // Remove dropped course from the state
           setPayments((prevPayments) =>

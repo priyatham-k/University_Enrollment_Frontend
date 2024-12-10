@@ -20,7 +20,8 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const StudentList = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -111,14 +112,20 @@ const StudentList = () => {
     }
   };
 
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:3001/api/student/${id}`);
       setStudents((prev) => prev.filter((student) => student._id !== id));
+      toast.success("Student deleted successfully!");
     } catch (err) {
       console.error("Error deleting student:", err);
+      const errorMessage =
+        err.response?.data?.message || "Failed to delete student. Please try again.";
+      toast.error(errorMessage);
     }
   };
+  
 
   if (loading) {
     return (
@@ -303,7 +310,8 @@ const StudentList = () => {
               <TextField
                 key={field}
                 label={field.charAt(0).toUpperCase() + field.slice(1)}
-                type="text"
+                type={field === 'phone' ? 'number' : 'text'}
+                
                 value={formData[field]}
                 onChange={(e) =>
                   setFormData({ ...formData, [field]: e.target.value })

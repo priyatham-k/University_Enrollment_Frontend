@@ -1,6 +1,7 @@
 import React from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const CourseTable = ({
   courses,
   enrolledSections,
@@ -55,13 +56,14 @@ const CourseTable = ({
                   <th>Description</th>
                   <th>Term</th>
                   <th>Sections (Day & Time) - Instructor</th>
+                  <th>Available Seats</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {courses.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center">
+                    <td colSpan="7" className="text-center">
                       No courses available.
                     </td>
                   </tr>
@@ -81,7 +83,7 @@ const CourseTable = ({
                           {course.sections && course.sections.length > 0 ? (
                             course.sections.map((section) => (
                               <div
-                                key={section._id || Math.random()} // Use Math.random() as a fallback for key if _id is unavailable
+                                key={section._id || Math.random()}
                                 style={{ marginBottom: "8px" }}
                               >
                                 <strong>
@@ -101,6 +103,31 @@ const CourseTable = ({
                               }}
                             >
                               No sections available.
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          {course.sections && course.sections.length > 0 ? (
+                            course.sections.map((section) => (
+                              <div
+                                key={section._id || Math.random()}
+                                style={{
+                                  fontSize: "12px",
+                                  marginBottom: "8px",
+                                }}
+                              >
+                                {section.numberOfSeats ?? "N/A"}
+                              </div>
+                            ))
+                          ) : (
+                            <div
+                              style={{
+                                fontSize: "12px",
+                                color: "#999",
+                                marginTop: "8px",
+                              }}
+                            >
+                              N/A
                             </div>
                           )}
                         </td>
@@ -176,6 +203,7 @@ const CourseTable = ({
           Get This Schedule
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 };

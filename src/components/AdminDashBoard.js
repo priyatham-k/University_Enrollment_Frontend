@@ -89,23 +89,7 @@ function AdminDashboard() {
                 <span style={{ fontWeight: "600" }}>Students</span>
               </a>
             </li>
-            <li
-              className={`nav-item ${
-                activeSection === "courses" ? "active" : ""
-              }`}
-            >
-              <a
-                className="nav-link"
-                onClick={() => handleSectionSwitch("courses")}
-                style={{ cursor: "pointer", fontSize: "12px" }}
-              >
-                <i
-                  className="fas fa-book"
-                  style={{ marginRight: "12px" }}
-                ></i>
-                <span style={{ fontWeight: "600" }}>Courses</span>
-              </a>
-            </li>
+
             <li
               className={`nav-item ${
                 activeSection === "Instructors" ? "active" : ""
@@ -121,6 +105,23 @@ function AdminDashboard() {
                   style={{ marginRight: "12px" }}
                 ></i>
                 <span style={{ fontWeight: "600" }}>Instructors</span>
+              </a>
+            </li>
+            <li
+              className={`nav-item ${
+                activeSection === "courses" ? "active" : ""
+              }`}
+            >
+              <a
+                className="nav-link"
+                onClick={() => handleSectionSwitch("courses")}
+                style={{ cursor: "pointer", fontSize: "12px" }}
+              >
+                <i
+                  className="fas fa-book"
+                  style={{ marginRight: "12px" }}
+                ></i>
+                <span style={{ fontWeight: "600" }}>Courses</span>
               </a>
             </li>
             <li

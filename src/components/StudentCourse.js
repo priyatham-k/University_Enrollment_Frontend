@@ -31,34 +31,115 @@ const StudentCourse = () => {
       toast.success(message, toastOptions);
     }
   };
-  const handleRegisterSection = (courseId, section) => {
+  const normalizeInsideBrackets = (inputString) => {
+    const match = inputString.match(/\(([^)]+)\)/); // Match content inside parentheses
+    if (!match) return null;
+  
+    let content = match[1].toLowerCase(); // Extract and convert to lowercase
+  
+    // Map for day replacements
+    const dayReplacements = {
+      monday: "mon",
+      mon: "mon",
+      tuesday: "tue",
+      tue: "tue",
+      wednesday: "wed",
+      wed: "wed",
+      thursday: "thu",
+      thu: "thu",
+      friday: "fri",
+      fri: "fri",
+    };
+  
+    // Replace full day names and shorthand variations
+    Object.keys(dayReplacements).forEach((day) => {
+      const replacement = dayReplacements[day];
+      content = content.replace(new RegExp(`\\b${day}\\b`, "g"), replacement);
+    });
+  
+    // Normalize the time formats
+    content = content
+      .replace(/\s+/g, " ") // Normalize multiple spaces to a single space
+      .replace(/(\d{1,2}):(\d{2})\s?(am|pm)/gi, (_, h, m, ap) => {
+        // Format time as 08:30am
+        const hour = h.length === 1 ? `0${h}` : h; // Add leading zero if needed
+        return `${hour}:${m}${ap.toLowerCase()}`;
+      })
+      .replace(/\s-\s/g, " - ") // Ensure proper spacing around `-`
+      .replace(/&/g, "-") // Replace `&` with `-`
+      .trim();
+  
+    return content;
+  };
+  
+  
+  const handleRegisterSection = async (courseId, section) => {
     console.log(enrolledSections);
-    console.log(courseId);
+    console.log(section);
+  
+    // Check if already enrolled in the course
     if (enrolledSections.some((enrolled) => enrolled.courseId === courseId)) {
       showToast("error", "You can only enroll in one section per course.");
       return;
     }
-
-    if (!courseId || !section?._id) {
-      console.error("Invalid section data:", { courseId, section });
-      toast.error("Invalid section data. Please try again.", toastOptions);
-      return;
+  
+    try {
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      const enrollmentsResponse = await axios.get(
+        `http://localhost:3001/api/student/enrolledClasses/${user._id}`
+      );
+      const currentEnrollments = enrollmentsResponse.data || []; // Array of enrollments
+  
+      // Normalize the new section's date and time
+      const newSectionNormalized = normalizeInsideBrackets(section.sectionName);
+      if (!newSectionNormalized) {
+        toast.error("Invalid section name. Please try again.", toastOptions);
+        return;
+      }
+  
+      // Check for conflicts
+      const hasConflict = currentEnrollments.some((enrollment) => {
+        const existingSectionNormalized = normalizeInsideBrackets(enrollment.sectionName);
+        return existingSectionNormalized === newSectionNormalized;
+      });
+  
+      if (hasConflict) {
+        showToast(
+          "error",
+          `You already have a class scheduled at ${newSectionNormalized}.`
+        );
+        return;
+      }
+  
+      // Validate section data
+      if (!courseId || !section?._id) {
+        console.error("Invalid section data:", { courseId, section });
+        toast.error("Invalid section data. Please try again.", toastOptions);
+        return;
+      }
+  
+      // Add section to enrolledSections
+      setEnrolledSections((prev) => [
+        ...prev,
+        {
+          courseId,
+          sectionId: section._id,
+          sectionName: section.sectionName,
+          instructor: section.instructor?.firstName || "Unknown",
+          price: 1000,
+        },
+      ]);
+  
+      toast.success("Section selected successfully!", toastOptions);
+    } catch (error) {
+      console.error("Error fetching enrollments:", error);
+      toast.error(
+        "Failed to fetch current enrollments. Please try again later.",
+        toastOptions
+      );
     }
-
-    setEnrolledSections((prev) => [
-      ...prev,
-      {
-        courseId,
-        sectionId: section._id,
-        sectionName: section.sectionName,
-        instructor: section.instructor?.firstName || "Unknown",
-        price: 1000,
-      },
-    ]);
-
-    toast.success("Section selected successfully!", toastOptions);
   };
-
+  
   const handleDropSection = (courseId) => {
     setEnrolledSections((prev) =>
       prev.filter((enrolled) => enrolled.courseId !== courseId)
