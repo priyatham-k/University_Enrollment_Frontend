@@ -115,6 +115,8 @@ const StudentEnrolledClasses = () => {
         );
         if (response.status === 200 || response.message == "Course dropped successfully and seat updated") {
           toast.success("Course dropped successfully!");
+          toast.success("Amount will be refunded in 4 to 5 bussiness days!");
+          toast.success("Thank You!");
           // Remove dropped course from the state
           setPayments((prevPayments) =>
             prevPayments.filter((payment) => payment._id !== selectedPaymentId)
